@@ -10,7 +10,7 @@ router.route('/login').post(login);
 router.route('/logout').get(logout);
 router.route('/:id/profile').get(isAuthenticated, getProfile);
 router.route('/profile/edit').post(isAuthenticated, upload.single('profilePicture'), editProfile);
-router.route('/suggested').get(isAuthenticated, getSuggestedUsers);
+// router.route('/suggested').get(isAuthenticated, getSuggestedUsers);
 router.route('/followOrUnfollow/:id').post(isAuthenticated, followOrUnfollowUser);
 router.route('/delete').delete(isAuthenticated, deleteAccount);
 
