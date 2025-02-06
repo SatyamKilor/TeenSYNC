@@ -4,20 +4,53 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.route.js";
+import postRoute from "./routes/post.route.js";
+import messageRoute from "./routes/message.route.js";
+import path from 'path';
+import { login } from "./controllers/user.controller.js";
 
 dotenv.config({});
 
 const app = express();
-
 const PORT = process.env.PORT || 3000;
 
-app.get("/", (req, res)=>{
-    return res.status(200).json({message: "This is coming from backend"});
-})
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({extended: true}));
+
+// file setup to use ejs
+app.set('view engine', 'ejs');
+
+
+//routes
+
+app.get("/", (req, res)=>{
+    return res.render("index.ejs"); 
+});
+
+app.get("/register", (req, res)=>{
+    return res.render("register.ejs"); 
+});
+
+app.get("/login", (req, res)=>{
+    return res.render("login.ejs");
+})
+
+app.post("/login", login)
+
+app.get("/home", (req, res) => {
+    const userCookie = req.cookies.user;
+
+    if (!userCookie) {
+        return res.redirect('/login');  // Redirect to login if user data is not found in cookie
+    }
+
+    const user = JSON.parse(userCookie); // Parse the user data from cookie
+    res.render("home.ejs", { user });  // Pass the user data to the EJS template
+});
+
+
 
 const corsOptions = {
     origin: 'http://localhost:5173',
@@ -27,6 +60,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/post", postRoute);
+app.use("/api/v1/messgae", messageRoute);
+
 
 app.listen(PORT, ()=>{
     connectDB();

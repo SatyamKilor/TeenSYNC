@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body>
+    <h1>Login Page</h1>
+
+    <form id="/api/v1/user/login" method="post">
+        <label for="email">E-Mail:</label>
+        <input type="email" name="email" placeholder="Please enter your email" required>
+        <br>
+    
+        <label for="password">Password:</label>
+        <input type="password" name="password" placeholder="Please enter your password" required>
+        <br>
+    
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        // Check if there's a 'message' query parameter in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('message');
+
+        if (message === 'account_created') {
+            alert("Account created successfully! Please log in.");
+        }
+    </script>
+</body>
+</html>

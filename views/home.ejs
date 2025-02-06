@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Welcome, <%= user.username %>!</h1>
+    <p>Email: <%= user.email %></p>
+    <p>Profile Picture: <img src="<%= user.profilePicture %>" alt="Profile Picture" width="100"></p>
+    
+    <!-- Example of rendering posts -->
+    <div>
+        <h2>Your Posts</h2>
+        <% if (user.posts && user.posts.length > 0) { %> <!-- Check if posts exist -->
+            <% user.posts.forEach(post => { %>
+                <div>
+                    <h3><%= post.title %></h3>
+                    <p><%= post.content %></p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>You have no posts yet.</p>
+        <% } %>
+    </div>
+
+</body>
+</html>
