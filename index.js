@@ -37,9 +37,13 @@ app.get("/login", (req, res)=>{
     return res.render("login.ejs");
 })
 
+app.get("/sign-in", (req, res)=>{
+    return res.render("register.ejs");
+})
+
 app.post("/login", login)
 
-app.get("/home", (req, res) => {
+app.get("/profile", (req, res) => {
     const userCookie = req.cookies.user;
 
     if (!userCookie) {
@@ -47,7 +51,7 @@ app.get("/home", (req, res) => {
     }
 
     const user = JSON.parse(userCookie); // Parse the user data from cookie
-    res.render("home.ejs", { user });  // Pass the user data to the EJS template
+    res.render("profile.ejs", { user });  // Pass the user data to the EJS template
 });
 
 

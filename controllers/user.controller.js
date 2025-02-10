@@ -114,7 +114,7 @@ export const login = async (req, res) => {
         });
 
         // Redirect to home
-        return res.redirect('/home');
+        return res.redirect('/profile');
     } catch (error) {
         console.log(error);
         res.status(500).send("Internal Server Error");
@@ -124,7 +124,7 @@ export const login = async (req, res) => {
 
 export const logout = async(_, res) =>{
     try{
-        return res.cookie("token","",{maxAge: 0}).json({
+         res.cookie("token","",{maxAge: 0}).json({
             message: "Logged out successfully",
             success: true,
         });

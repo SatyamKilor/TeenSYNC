@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - Unveiled</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      height: 100vh;
+    }
+
+    .wrapper {
+      display: flex;
+      width: 100%;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: #283227;
+      color: #fff;
+      padding: 20px;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      z-index: 10; /* Ensure sidebar is on top of content */
+    }
+
+    .sidebar nav ul {
+      list-style-type: none;
+    }
+
+    .sidebar nav ul li {
+      margin: 20px 0;
+    }
+
+    .sidebar-link {
+      color: #809881; /* Light Green */
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: block;
+    }
+
+    .sidebar-link:hover {
+      text-decoration: underline;
+    }
+
+    .logout {
+      color: #f44336; /* Red for logout */
+    }
+
+    .main-content {
+      flex-grow: 1;
+      padding: 20px;
+      overflow-y: auto; /* Ensures the content scrolls independently */
+    }
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-right: 20px;
+      border: 5px solid #809881; /* Green border around the profile picture */
+      object-fit: cover; /* Ensures the image covers the circle area */
+      object-position: center; /* Centers the image inside the circle */
+    }
+
+    .profile-details {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .username {
+      font-size: 2rem;
+      color: #283227;
+    }
+
+    .edit-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #809881;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .edit-btn:hover {
+      background-color: #6a7c60;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 20px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat strong {
+      font-size: 1.5rem;
+      display: block;
+    }
+
+    .feed {
+      margin-top: 30px;
+    }
+
+    .post-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 posts per row */
+      gap: 20px;
+    }
+
+    .post {
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+      .wrapper {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+      }
+
+      .profile-header {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .profile-info {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .profile-img {
+        margin-right: 0;
+        margin-bottom: 20px;
+      }
+
+      .profile-stats {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .post-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Adjust for smaller screens */
+      }
+    }
+
+</style>
+<body>
+  <div class="wrapper">
+    <!-- Sidebar Section -->
+    <div class="sidebar">
+      <nav>
+        <ul>
+          <li><a href="#" class="sidebar-link">Home</a></li>
+          <li><a href="#" class="sidebar-link">Search</a></li>
+          <li><a href="#" class="sidebar-link">Messages</a></li>
+          <li><a href="#" class="sidebar-link">Notifications</a></li>
+          <li><a href="#" class="sidebar-link">Create New Post</a></li>
+          <li><a href="/profile" class="sidebar-link">Profile</a></li>
+          <li><a href="/api/v1/user/logout" class="sidebar-link logout">Log Out</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Main Content Section -->
+    <div class="main-content">
+      <div class="profile-header">
+        <div class="profile-info">
+          <img src="" alt="Profile Picture" class="profile-img">
+          <div class="profile-details">
+            <h2 class="username">Username</h2>
+            <button class="edit-btn">Edit Profile</button>
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="stat">
+            <strong>100</strong>
+            <p>Posts</p>
+          </div>
+          <div class="stat">
+            <strong>250</strong>
+            <p>Followers</p>
+          </div>
+          <div class="stat">
+            <strong>180</strong>
+            <p>Following</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feed">
+        <h3>Your Posts</h3>
+        <div class="post-gallery">
+          <!-- Repeat for each post -->
+          <div class="post">
+            <img src="post1.jpg" alt="Post 1" class="post-img">
+          </div>
+          <div class="post">
+            <img src="post2.jpg" alt="Post 2" class="post-img">
+          </div>
+          <!-- More posts here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

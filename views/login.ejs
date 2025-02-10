@@ -1,33 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Unveiled</title>
 </head>
-<body>
-    <h1>Login Page</h1>
+<style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    <form id="/api/v1/user/login" method="post">
-        <label for="email">E-Mail:</label>
-        <input type="email" name="email" placeholder="Please enter your email" required>
-        <br>
-    
-        <label for="password">Password:</label>
-        <input type="password" name="password" placeholder="Please enter your password" required>
-        <br>
-    
-        <input type="submit" value="Submit">
+body {
+  font-family: Arial, sans-serif;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  text-align: center;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  background-color: #283227; /* Dark Green */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+  font-size: 2.5rem;
+  color: #809881; /* Light Green */
+  margin-bottom: 20px;
+}
+
+header p {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  text-align: left;
+}
+
+.input-group label {
+  font-size: 1rem;
+  color: #809881; /* Light Green */
+  margin-bottom: 5px;
+  display: block;
+}
+
+.input-group input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #535D51; /* Mid Green */
+  border-radius: 5px;
+  background-color: #000;
+  color: #fff;
+  outline: none;
+  width: 100%;
+}
+
+.input-group input:focus {
+  border-color: #809881; /* Light Green */
+}
+
+.cta-button {
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  background-color: #809881; /* Light Green */
+  color: #fff;
+}
+
+.cta-button:hover {
+  transform: scale(1.05);
+}
+
+.cta-button:focus {
+  outline: none;
+}
+
+footer p {
+  font-size: 0.9rem;
+  color: #fff;
+  margin-top: 40px;
+}
+
+footer .footer-link {
+  color: #809881; /* Light Green */
+  text-decoration: none;
+}
+
+footer .footer-link:hover {
+  text-decoration: underline;
+}
+
+</style>
+<body>
+  <div class="container">
+    <header>
+      <h1>Welcome Back</h1>
+      <p>Login to continue your anonymous journey on Unveiled.</p>
+    </header>
+
+    <form action="/api/v1/user/login" method="POST" class="login-form">
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="Enter your email">
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Enter your password">
+      </div>
+
+      <button type="submit" class="cta-button login-btn">Login</button>
     </form>
 
-    <script>
-        // Check if there's a 'message' query parameter in the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const message = urlParams.get('message');
-
-        if (message === 'account_created') {
-            alert("Account created successfully! Please log in.");
-        }
-    </script>
+    <footer>
+      <p>Don't have an account? <a href="/sign-in" class="footer-link">Sign up here</a></p>
+    </footer>
+  </div>
 </body>
 </html>

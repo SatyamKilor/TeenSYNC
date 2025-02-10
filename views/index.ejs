@@ -1,36 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unveiled - Anonymous Social Media</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <style>
-    h1{
-        color: green;
-    }
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  text-align: center;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+}
+
+header h1 {
+  font-size: 3rem;
+  color: #809881; /* Light Green */
+  margin-bottom: 20px;
+}
+
+header p {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.cta-section {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.cta-button {
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.signup-btn {
+  background-color: #283227; /* Dark Green */
+  color: #fff;
+}
+
+.login-btn {
+  background-color: #535D51; /* Mid Green */
+  color: #fff;
+}
+
+.cta-button:hover {
+  transform: scale(1.05);
+}
+
+.cta-button:focus {
+  outline: none;
+}
+
+footer p {
+  font-size: 0.9rem;
+  color: #535D51;
+  margin-top: 40px;
+}
+
 </style>
 <body>
-    <h1>Hello, this is home page.</h1>
-    <button onclick="change()">Change Color</button>
+  <div class="container">
+    <header>
+      <h1>Welcome to Unveiled</h1>
+      <p>Your safe space to share, listen, and connect anonymously.</p>
+    </header>
+    
+    <div class="cta-section">
+        <form action="/sign-in" method="get">
+            <button class="cta-button signup-btn" type="submit">Sign Up</button>
+        </form>
 
-    <form action="/register">
-        <button type="submit">register</button>
-    </form>
+        <form action="/login" method="get">
+            <button class="cta-button login-btn" type="submit">Login</button>
+        </form>
+    </div>
 
-    <script>
-        const text = document.querySelector("h1");
-        let n = 0;
-        function change(){
-
-            if(n===0){
-                text.style.color = 'black';
-                n = 1;
-            } else {
-                text.style.color = 'green';
-                n = 0;
-            }
-        }
-    </script>
+    <footer>
+      <p>&copy; 2025 Unveiled. All rights reserved.</p>
+    </footer>
+  </div>
 </body>
 </html>
