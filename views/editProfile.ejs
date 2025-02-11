@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile - Unveiled</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+  /* Add your existing styles */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+  }
+  .edit-profile-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .edit-profile-form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 50%;
+  }
+
+  .edit-profile-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    font-weight: bold;
+    display: block;
+  }
+
+  .form-group input, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    height: 100px;
+  }
+
+  .submit-btn {
+    background-color: #809881;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.1rem;
+  }
+
+  .submit-btn:hover {
+    background-color: #6a7c60;
+  }
+
+  .profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 5px solid #809881;
+    margin-bottom: 10px;
+  }
+
+</style>
+<body>
+  <div class="edit-profile-wrapper">
+    <form action="/api/v1/user/profile/edit" method="POST" enctype="multipart/form-data" class="edit-profile-form">
+      <h2>Edit Profile</h2>
+
+      <!-- Profile Picture -->
+      <div class="form-group">
+        <label for="profile-picture">Profile Picture</label>
+        <img src="<%= user.profilePicture %>" alt="Profile Picture" class="profile-img" />
+        <input type="file" name="profilePicture" id="profile-picture" accept="image/*" />
+      </div>
+
+      <!-- Bio -->
+      <div class="form-group">
+        <label for="bio">Bio</label>
+        <textarea name="bio" id="bio" rows="5"><%= user.bio %></textarea>
+      </div>
+
+      <!-- Change Email -->
+      <div class="form-group">
+        <label for="email">Change Email</label>
+        <input type="email" name="email" id="email" value="<%= user.email %>" placeholder="Enter your new email" />
+      </div>
+
+      <!-- Update Button -->
+      <button type="submit" class="submit-btn">Update Profile</button>
+    </form>
+  </div>
+</body>
+</html>

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Profile - Unveiled</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- Remix Icon CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
 </head>
 <style>
     * {
@@ -33,7 +35,7 @@
       height: 100vh;
       position: sticky;
       top: 0;
-      z-index: 10; /* Ensure sidebar is on top of content */
+      z-index: 10;
     }
 
     .sidebar nav ul {
@@ -45,7 +47,7 @@
     }
 
     .sidebar-link {
-      color: #809881; /* Light Green */
+      color: #809881;
       text-decoration: none;
       font-size: 1.1rem;
       display: block;
@@ -56,13 +58,13 @@
     }
 
     .logout {
-      color: #f44336; /* Red for logout */
+      color: #f44336;
     }
 
     .main-content {
       flex-grow: 1;
       padding: 20px;
-      overflow-y: auto; /* Ensures the content scrolls independently */
+      overflow-y: auto;
     }
 
     .profile-header {
@@ -82,9 +84,8 @@
       height: 120px;
       border-radius: 50%;
       margin-right: 20px;
-      border: 5px solid #809881; /* Green border around the profile picture */
-      object-fit: cover; /* Ensures the image covers the circle area */
-      object-position: center; /* Centers the image inside the circle */
+      border: 5px solid #809881;
+      object-fit: cover;
     }
 
     .profile-details {
@@ -96,6 +97,12 @@
     .username {
       font-size: 2rem;
       color: #283227;
+    }
+
+    .bio {
+      font-size: 1rem;
+      color: #555;
+      margin-top: 10px;
     }
 
     .edit-btn {
@@ -131,9 +138,14 @@
       margin-top: 30px;
     }
 
+    .saved-posts {
+      display: none;
+      margin-top: 30px;
+    }
+
     .post-gallery {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 posts per row */
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
 
@@ -148,6 +160,17 @@
       width: 100%;
       height: 200px;
       object-fit: cover;
+    }
+
+    .bookmark-btn {
+      font-size: 1.5rem;
+      color: #809881;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .bookmark-btn:hover {
+      color: #6a7c60;
     }
 
     @media (max-width: 768px) {
@@ -181,7 +204,7 @@
       }
 
       .post-gallery {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Adjust for smaller screens */
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       }
     }
 
@@ -207,33 +230,42 @@
     <div class="main-content">
       <div class="profile-header">
         <div class="profile-info">
-          <img src="" alt="Profile Picture" class="profile-img">
+          <img src= <%= user.profilePicture %> alt="Profile Picture" class="profile-img">
           <div class="profile-details">
-            <h2 class="username">Username</h2>
-            <button class="edit-btn">Edit Profile</button>
+            <h2 class="username"><%= user.username %></h2>
+            <p class="bio"><%= user.bio %></p>
+            <form action="/edit" method="get">
+              <button class="edit-btn">Edit Profile</button>
+            </form>
           </div>
         </div>
 
         <div class="profile-stats">
           <div class="stat">
-            <strong>100</strong>
+            <strong><%= user.posts.length %></strong>
             <p>Posts</p>
           </div>
           <div class="stat">
-            <strong>250</strong>
+            <strong><%= user.followers.length %></strong>
             <p>Followers</p>
           </div>
           <div class="stat">
-            <strong>180</strong>
+            <strong><%= user.following.length %></strong>
             <p>Following</p>
           </div>
         </div>
       </div>
 
-      <div class="feed">
+      <!-- Bookmark Button to Toggle Posts -->
+      <div class="bookmark-btn">
+        <i class="ri-bookmark-line" id="bookmark-icon"></i> <!-- Initial Bookmark Icon -->
+      </div>
+
+      <!-- User's Posts -->
+      <div class="feed" id="user-posts">
         <h3>Your Posts</h3>
         <div class="post-gallery">
-          <!-- Repeat for each post -->
+          <!-- Example of posts -->
           <div class="post">
             <img src="post1.jpg" alt="Post 1" class="post-img">
           </div>
@@ -243,7 +275,49 @@
           <!-- More posts here -->
         </div>
       </div>
+
+      <!-- Saved Posts (Initially Hidden) -->
+      <div class="saved-posts" id="saved-posts">
+        <h3>Saved Posts</h3>
+        <div class="post-gallery">
+          <!-- Example of saved posts -->
+          <div class="post">
+            <img src="saved1.jpg" alt="Saved Post 1" class="post-img">
+          </div>
+          <div class="post">
+            <img src="saved2.jpg" alt="Saved Post 2" class="post-img">
+          </div>
+          <!-- More saved posts here -->
+        </div>
+      </div>
+
     </div>
   </div>
+
+  <script>
+    // JavaScript to toggle between user's posts and saved posts
+    const bookmarkIcon = document.getElementById("bookmark-icon");
+    const userPosts = document.getElementById("user-posts");
+    const savedPosts = document.getElementById("saved-posts");
+
+    bookmarkIcon.addEventListener("click", () => {
+      if (savedPosts.style.display === "none") {
+        savedPosts.style.display = "block";
+        userPosts.style.display = "none";
+        // Change the icon to filled bookmark
+        bookmarkIcon.classList.remove("ri-bookmark-line");
+        bookmarkIcon.classList.add("ri-bookmark-fill");
+      } else {
+        savedPosts.style.display = "none";
+        userPosts.style.display = "block";
+        // Revert the icon to the line bookmark
+        bookmarkIcon.classList.remove("ri-bookmark-fill");
+        bookmarkIcon.classList.add("ri-bookmark-line");
+      }
+    });
+
+
+  </script>
+
 </body>
 </html>

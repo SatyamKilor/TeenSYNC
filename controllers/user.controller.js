@@ -122,17 +122,22 @@ export const login = async (req, res) => {
 };
 
 
-export const logout = async(_, res) =>{
-    try{
-         res.cookie("token","",{maxAge: 0}).json({
-            message: "Logged out successfully",
-            success: true,
+export const logout = async(_, res) => {
+    try {
+        // Clear the authentication cookie
+        res.cookie("token", "", { maxAge: 0 });
+
+        // Redirect the user to the homepage
+        return res.redirect('/');  // Redirect to the homepage after logout
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Something went wrong during logout",
+            success: false,
         });
     }
-    catch(error){
-        console.log(error);
-    }
 };
+
 
 export const getProfile = async(req, res)=>{
     try{
@@ -149,52 +154,68 @@ export const getProfile = async(req, res)=>{
     }
 };
 
-export const editProfile = async(req, res) =>{
-    try{
-        const userId = req.id;
-        const {bio, accountStatus} = req.body;
+export const editProfile = async (req, res) => {
+    try {
+        const userId = req.id;  // Assuming user ID is stored in req.id
+        const { bio, accountStatus } = req.body;
         const profilePicture = req.file;
-        let cloduResponse;
+        let cloudResponse;
 
-        if(profilePicture){
-            const fileUri = getDataUri(profilePicture);
-            cloduResponse = await cloudinary.uploader.upload(fileUri);
+        // If a new profile picture is uploaded, handle it
+        if (profilePicture) {
+            const fileUri = getDataUri(profilePicture);  // Assuming getDataUri converts image to URI
+            cloudResponse = await cloudinary.uploader.upload(fileUri); // Upload to cloud
         }
-        
+
+        // Find the user by ID, excluding password from the response
         const user = await User.findById(userId).select("-password");
 
-        if(!user){
+        if (!user) {
             return res.status(404).json({
                 message: "User not found",
                 success: false,
             });
         }
 
-        if(bio){
+        // Update bio if provided
+        if (bio) {
             user.bio = bio;
         }
 
-        if(accountStatus){
+        // Update accountStatus if provided
+        if (accountStatus) {
             user.accountStatus = accountStatus;
         }
 
-        if(profilePicture){
-            user.profilePicture = cloduResponse.secure_url;
+        // Update profile picture if uploaded
+        if (profilePicture) {
+            user.profilePicture = cloudResponse.secure_url;  // Update with cloud URL
         }
 
+        // Save the user document after changes
         await user.save();
 
-        return res.status(200).json({
-            message: "Profile updated successfully",
-            success: true,
-            user
+        // Generate a new JWT token with the updated user data
+        const newToken = jwt.sign(
+            { userId: user._id },  // User ID is embedded in the token
+            process.env.SECRET_KEY,  // Your JWT secret
+            { expiresIn: '1h' }  // Adjust the expiration time
+        );
+
+        // Set the new JWT token in the cookie (or use any other method to send it back)
+        res.cookie('token', newToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+
+        // Redirect to the profile page after successful update
+        return res.redirect('/profile'); // Redirect to the user's profile page after update
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Something went wrong while updating profile",
+            success: false,
         });
     }
-    catch(error){
-        console.log(error);
-        
-    }
-}
+};
+
 
 export const getSuggestedUsers = async(req, res) =>{
     try{

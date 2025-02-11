@@ -54,6 +54,16 @@ app.get("/profile", (req, res) => {
     res.render("profile.ejs", { user });  // Pass the user data to the EJS template
 });
 
+app.get('/edit', (req, res)=>{
+    const userCookie = req.cookies.user;
+
+    if (!userCookie) {
+        return res.redirect('/login');  // Redirect to login if user data is not found in cookie
+    }
+
+    const user = JSON.parse(userCookie); // Parse the user data from cookie
+    res.render("editProfile.ejs", { user });
+});
 
 
 const corsOptions = {
