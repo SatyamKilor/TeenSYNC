@@ -33,12 +33,12 @@ app.get("/register", (req, res)=>{
     return res.render("register.ejs"); 
 });
 
-app.get("/login", (req, res)=>{
-    return res.render("login.ejs");
-})
-
 app.get("/sign-in", (req, res)=>{
     return res.render("register.ejs");
+})
+
+app.get("/login", (req, res)=>{
+    return res.render("login.ejs");
 })
 
 app.post("/login", login)

@@ -157,7 +157,7 @@ export const getProfile = async(req, res)=>{
 export const editProfile = async (req, res) => {
     try {
         const userId = req.id;  // Assuming user ID is stored in req.id
-        const { bio, accountStatus } = req.body;
+        const { bio, email } = req.body;
         const profilePicture = req.file;
         let cloudResponse;
 
@@ -182,9 +182,8 @@ export const editProfile = async (req, res) => {
             user.bio = bio;
         }
 
-        // Update accountStatus if provided
-        if (accountStatus) {
-            user.accountStatus = accountStatus;
+        if (email) {
+            user.email = email;
         }
 
         // Update profile picture if uploaded
@@ -194,6 +193,33 @@ export const editProfile = async (req, res) => {
 
         // Save the user document after changes
         await user.save();
+
+        // Update the user cookie with the new user data
+        const updatedUser = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            profilePicture: user.profilePicture,
+            bio: user.bio,
+            accountStatus: user.accountStatus,
+            followers: user.followers,
+            following: user.following,
+            posts: await Promise.all(
+                user.posts.map(async (postId) => {
+                    const post = await Post.findById(postId);
+                    if (post.author.equals(user._id)) {
+                        return post;
+                    }
+                    return null;
+                })
+            ) || []
+        };
+
+        res.cookie('user', JSON.stringify(updatedUser), {
+            httpOnly: true,
+            sameSite: 'strict',
+            maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+        });
 
         // Generate a new JWT token with the updated user data
         const newToken = jwt.sign(
