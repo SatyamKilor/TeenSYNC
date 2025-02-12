@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post - Unveiled</title>
+</head>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #283227; /* Dark Green */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #535D51; /* Mid Green */
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: white;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="file"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #809881; /* Light Green */
+    background-color: #283227; /* Dark Green */
+    color: white;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button.submit-btn {
+    background-color: #809881; /* Light Green */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button.submit-btn:hover {
+    background-color: #535D51; /* Mid Green */
+}
+
+button.submit-btn:active {
+    background-color: #283227; /* Dark Green */
+}
+
+</style>
+<body>
+    <div class="container">
+        <h1>Create a New Post</h1>
+        <form action="/api/v1/post/addpost" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="image-upload">Upload an Image</label>
+                <input type="file" id="image-upload" name="contents" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="caption">Write a Caption</label>
+                <textarea id="caption" name="caption" rows="4" placeholder="Share your thoughts..." required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Post</button>
+        </form>
+    </div>
+</body>
+</html>
+

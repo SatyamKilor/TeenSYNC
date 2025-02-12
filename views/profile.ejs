@@ -6,8 +6,7 @@
   <title>User Profile - Unveiled</title>
   <!-- Remix Icon CDN -->
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
-</head>
-<style>
+  <style>
     * {
       margin: 0;
       padding: 0;
@@ -137,14 +136,9 @@
       margin-top: 30px;
     }
 
-    .saved-posts {
-      display: none;
-      margin-top: 30px;
-    }
-
     .post-gallery {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 20px;
     }
 
@@ -152,24 +146,57 @@
       background-color: #fff;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      padding: 10px;
     }
 
     .post-img {
       width: 100%;
-      height: 200px;
+      height: 300px;
       object-fit: cover;
+      border-radius: 5px;
     }
 
-    .bookmark-btn {
+    .post-details {
+      padding-top: 10px;
+      text-align: left;
+    }
+
+    .post-username {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #283227;
+    }
+
+    .post-caption {
+      margin-top: 5px;
+      font-size: 1rem;
+      color: #555;
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .post-actions i {
+      cursor: pointer;
       font-size: 1.5rem;
       color: #809881;
-      cursor: pointer;
-      margin-bottom: 20px;
     }
 
-    .bookmark-btn:hover {
+    .post-actions i:hover {
       color: #6a7c60;
+    }
+
+    .liked i {
+      color: #f44336;
+    }
+
+    .bookmarked i {
+      color: #809881;
     }
 
     @media (max-width: 768px) {
@@ -201,13 +228,10 @@
         flex-direction: column;
         gap: 10px;
       }
-
-      .post-gallery {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      }
     }
 
-</style>
+  </style>
+</head>
 <body>
   <div class="wrapper">
     <!-- Sidebar Section -->
@@ -229,7 +253,7 @@
     <div class="main-content">
       <div class="profile-header">
         <div class="profile-info">
-          <img src= <%= user.profilePicture %> alt="Profile Picture" class="profile-img">
+          <img src="<%= user.profilePicture %>" alt="Profile Picture" class="profile-img">
           <div class="profile-details">
             <h2 class="username"><%= user.username %></h2>
             <p class="bio"><%= user.bio %></p>
@@ -255,38 +279,11 @@
         </div>
       </div>
 
-      <!-- Bookmark Button to Toggle Posts -->
-      <div class="bookmark-btn">
-        <i class="ri-bookmark-line" id="bookmark-icon"></i> <!-- Initial Bookmark Icon -->
-      </div>
-
       <!-- User's Posts -->
       <div class="feed" id="user-posts">
         <h3>Your Posts</h3>
         <div class="post-gallery">
-          <!-- Example of posts -->
-          <div class="post">
-            <img src="post1.jpg" alt="Post 1" class="post-img">
-          </div>
-          <div class="post">
-            <img src="post2.jpg" alt="Post 2" class="post-img">
-          </div>
-          <!-- More posts here -->
-        </div>
-      </div>
-
-      <!-- Saved Posts (Initially Hidden) -->
-      <div class="saved-posts" id="saved-posts">
-        <h3>Saved Posts</h3>
-        <div class="post-gallery">
-          <!-- Example of saved posts -->
-          <div class="post">
-            <img src="saved1.jpg" alt="Saved Post 1" class="post-img">
-          </div>
-          <div class="post">
-            <img src="saved2.jpg" alt="Saved Post 2" class="post-img">
-          </div>
-          <!-- More saved posts here -->
+          <!-- Dynamically Loaded Posts will appear here -->
         </div>
       </div>
 
@@ -294,29 +291,93 @@
   </div>
 
   <script>
-    // JavaScript to toggle between user's posts and saved posts
-    const bookmarkIcon = document.getElementById("bookmark-icon");
-    const userPosts = document.getElementById("user-posts");
-    const savedPosts = document.getElementById("saved-posts");
+    document.addEventListener("DOMContentLoaded", async function() {
+      // Properly embed the user object using EJS
+      const user = <%- JSON.stringify(user) %>;
 
-    bookmarkIcon.addEventListener("click", () => {
-      if (savedPosts.style.display === "none") {
-        savedPosts.style.display = "block";
-        userPosts.style.display = "none";
-        // Change the icon to filled bookmark
-        bookmarkIcon.classList.remove("ri-bookmark-line");
-        bookmarkIcon.classList.add("ri-bookmark-fill");
-      } else {
-        savedPosts.style.display = "none";
-        userPosts.style.display = "block";
-        // Revert the icon to the line bookmark
-        bookmarkIcon.classList.remove("ri-bookmark-fill");
-        bookmarkIcon.classList.add("ri-bookmark-line");
+      try {
+        const response = await fetch('/api/v1/post/userpost/all', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + user.token
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const posts = data.posts;
+          const postGallery = document.querySelector('.post-gallery');
+          postGallery.innerHTML = ""; // Clear existing posts
+
+          // Dynamically render the posts
+          posts.forEach(post => {
+            const postElement = document.createElement('div');
+            postElement.classList.add('post');
+
+            const postImage = document.createElement('img');
+            postImage.classList.add('post-img');
+            postImage.src = post.contents; // Assuming 'contents' has the image URL
+            postElement.appendChild(postImage);
+
+            const postDetails = document.createElement('div');
+            postDetails.classList.add('post-details');
+
+            const postUsername = document.createElement('p');
+            postUsername.classList.add('post-username');
+            postUsername.textContent = user.username;  // Assuming 'username' in post object
+            postDetails.appendChild(postUsername);
+
+            const postCaption = document.createElement('p');
+            postCaption.classList.add('post-caption');
+            postCaption.textContent = post.caption;  // Assuming 'caption' in post object
+            postDetails.appendChild(postCaption);
+
+            const postActions = document.createElement('div');
+            postActions.classList.add('post-actions');
+
+            // Like Button
+            const likeButton = document.createElement('i');
+            likeButton.classList.add('ri-thumb-up-line');
+            if (post.liked) {
+              likeButton.classList.add('liked');
+              likeButton.classList.remove('ri-thumb-up-line');
+              likeButton.classList.add('ri-thumb-up-fill');
+            }
+            postActions.appendChild(likeButton);
+
+            // Comment Button
+            const commentButton = document.createElement('i');
+            commentButton.classList.add('ri-chat-1-line');
+            postActions.appendChild(commentButton);
+
+            // Bookmark Button
+            const bookmarkButton = document.createElement('i');
+            bookmarkButton.classList.add('ri-bookmark-line');
+            if (post.bookmarked) {
+              bookmarkButton.classList.add('bookmarked');
+              bookmarkButton.classList.remove('ri-bookmark-line');
+              bookmarkButton.classList.add('ri-bookmark-fill');
+            }
+            postActions.appendChild(bookmarkButton);
+
+            postDetails.appendChild(postActions);
+            postElement.appendChild(postDetails);
+
+            postGallery.appendChild(postElement);
+          });
+        } else {
+          console.error("Failed to fetch posts");
+        }
+      } catch (err) {
+        console.error("Error fetching posts: ", err);
       }
     });
+    
 
+    
 
   </script>
-
 </body>
 </html>

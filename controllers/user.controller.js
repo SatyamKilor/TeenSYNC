@@ -201,7 +201,6 @@ export const editProfile = async (req, res) => {
             email: user.email,
             profilePicture: user.profilePicture,
             bio: user.bio,
-            accountStatus: user.accountStatus,
             followers: user.followers,
             following: user.following,
             posts: await Promise.all(

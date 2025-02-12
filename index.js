@@ -51,8 +51,9 @@ app.get("/profile", (req, res) => {
     }
 
     const user = JSON.parse(userCookie); // Parse the user data from cookie
-    res.render("profile.ejs", { user });  // Pass the user data to the EJS template
+    res.render("profile.ejs", { user: user });  // Pass the user data to the EJS template
 });
+
 
 app.get('/edit', (req, res)=>{
     const userCookie = req.cookies.user;
@@ -63,6 +64,10 @@ app.get('/edit', (req, res)=>{
 
     const user = JSON.parse(userCookie); // Parse the user data from cookie
     res.render("editProfile.ejs", { user });
+});
+
+app.get('/new-post', (req, res)=>{
+    res.render('newPost.ejs');
 });
 
 

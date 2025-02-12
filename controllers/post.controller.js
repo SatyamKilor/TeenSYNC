@@ -1,5 +1,7 @@
 import sharp from "sharp";
 import cloudinary from "cloudinary";
+import jwt from "jsonwebtoken";
+import getDataUri from "../utils/dataUri.js";
 import {Post} from "../models/post.model.js"
 import {User} from "../models/user.model.js";
 import { Comment } from "../models/comment.model.js";
@@ -7,10 +9,10 @@ import { Comment } from "../models/comment.model.js";
 export const addNewPost = async (req, res)=>{
     try{
         const {caption} = req.body;
-        const contents = req.file;
+        const image = req.file;
         const authorID = req.id;
         
-        if(!contents){
+        if(!image){
             return res.status(400).json({
                 message: "Please upload a file",
                 success: false
@@ -18,7 +20,7 @@ export const addNewPost = async (req, res)=>{
         }
 
         //image upload
-        const optimisedImageBuffer = await sharp(contents.buffer).resize({width: 800, height: 800, fit: 'inside'})
+        const optimisedImageBuffer = await sharp(image.buffer).resize({width: 800, height: 800, fit: 'inside'})
         .toFormat('jpeg', {quality: 80})
         .toBuffer(); 
 
@@ -39,11 +41,44 @@ export const addNewPost = async (req, res)=>{
 
         await post.populate({path: 'author', select:"-password"});
 
-        return res.status(201).json({
-            message: "Post created successfully",
-            post,
-            success: true
-        });
+
+        const updatedUser = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            profilePicture: user.profilePicture,
+            bio: user.bio,
+            followers: user.followers,
+            following: user.following,
+            posts: await Promise.all(
+                user.posts.map(async (postId) => {
+                    const post = await Post.findById(postId);
+                    if (post.author.equals(user._id)) {
+                        return post;
+                    }
+                    return null;
+                })
+            ) || []
+        };
+
+        
+                res.cookie('user', JSON.stringify(updatedUser), {
+                    httpOnly: true,
+                    sameSite: 'strict',
+                    maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+                });
+        
+                // Generate a new JWT token with the updated user data
+                const newToken = jwt.sign(
+                    { userId: user._id },  // User ID is embedded in the token
+                    process.env.SECRET_KEY,  // Your JWT secret
+                    { expiresIn: '1h' }  // Adjust the expiration time
+                );
+        
+                // Set the new JWT token in the cookie (or use any other method to send it back)
+                res.cookie('token', newToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+
+        return res.redirect(`/profile`);
     }
     catch(err){
         console.log(err);
@@ -74,29 +109,34 @@ export const getAllPosts = async (req, res)=>{
 };
 
 //user only
-export const getUserPosts = async (req, res)=>{
-    try{
-        const authorId = req.id;
-        const posts = await Post.find({author: authorId}).sort({createdAt: -1}).populate({
+export const getUserPosts = async (req, res) => {
+    try {
+        const authorId = req.id;  // Assuming req.id contains the logged-in user's ID
+        const posts = await Post.find({ author: authorId }).sort({ createdAt: -1 }).populate({
             path: 'author',
             select: "username, profilePicture"
         }).populate({
             path: 'comments',
-            sort: {createdAt: -1},
-            populate:{
+            sort: { createdAt: -1 },
+            populate: {
                 path: 'author',
                 select: "username, profilePicture"
             }
         });
+
         return res.status(200).json({
             posts,
             success: true
         });
-    }
-    catch(err){
+    } catch (err) {
         console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch posts"
+        });
     }
 };
+
 
 export const upvote = async(req, res)=>{
     try{
