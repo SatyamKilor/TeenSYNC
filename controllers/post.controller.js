@@ -85,6 +85,63 @@ export const addNewPost = async (req, res)=>{
     }
 };
 
+export const editPost = async (req, res)=>{
+    try{
+        const { bio } = req.body; 
+        const postId = req.params.id; 
+        const authorID = req.id;  
+        const user = await User.findById(authorID);
+
+        const post = await Post.findById(postId);
+
+        if (post && post.author.toString() === authorID) {
+                post.caption = bio;  
+                await post.save();  
+            }
+
+        const updatedUser = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            profilePicture: user.profilePicture,
+            bio: user.bio,
+            followers: user.followers,
+            following: user.following,
+            posts: await Promise.all(
+                user.posts.map(async (postId) => {
+                    const post = await Post.findById(postId);
+                    if (post.author.equals(user._id)) {
+                        return post;
+                    }
+                    return null;
+                })
+            ) || []
+        };
+
+        
+                res.cookie('user', JSON.stringify(updatedUser), {
+                    httpOnly: true,
+                    sameSite: 'strict',
+                    maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+                });
+        
+                // Generate a new JWT token with the updated user data
+                const newToken = jwt.sign(
+                    { userId: user._id },  // User ID is embedded in the token
+                    process.env.SECRET_KEY,  // Your JWT secret
+                    { expiresIn: '1h' }  // Adjust the expiration time
+                );
+        
+                // Set the new JWT token in the cookie (or use any other method to send it back)
+                res.cookie('token', newToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+
+        return res.redirect(`/profile`);
+    }
+    catch(err){
+        console.log(err);
+    }
+};
+
 //feed
 export const getAllPosts = async (req, res)=>{
     try{
@@ -274,10 +331,46 @@ export const deletePost = async(req, res)=>{
         await user.save();
 
         await Comment.deleteMany({post: postId});
-        return res.status(200).json({
-            success:true,
-            message:'Post deleted'
-        });
+       // Update the user cookie with the new user data
+               const updatedUser = {
+                   _id: user._id,
+                   username: user.username,
+                   email: user.email,
+                   profilePicture: user.profilePicture,
+                   bio: user.bio,
+                   followers: user.followers,
+                   following: user.following,
+                   posts: await Promise.all(
+                       user.posts.map(async (postId) => {
+                           const post = await Post.findById(postId);
+                           if (post.author.equals(user._id)) {
+                               return post;
+                           }
+                           return null;
+                       })
+                   ) || []
+               };
+       
+               res.cookie('user', JSON.stringify(updatedUser), {
+                   httpOnly: true,
+                   sameSite: 'strict',
+                   maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+               });
+       
+               // Generate a new JWT token with the updated user data
+               const newToken = jwt.sign(
+                   { userId: user._id },  // User ID is embedded in the token
+                   process.env.SECRET_KEY,  // Your JWT secret
+                   { expiresIn: '1h' }  // Adjust the expiration time
+               );
+       
+               // Set the new JWT token in the cookie (or use any other method to send it back)
+               res.cookie('token', newToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+       
+               // Redirect to the profile page after successful update
+               return res.redirect('/profile'); // Redirect to the user's profile page after update
+
+        
     }
     catch(err){
         console.log(err);

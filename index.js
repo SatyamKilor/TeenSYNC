@@ -8,6 +8,7 @@ import postRoute from "./routes/post.route.js";
 import messageRoute from "./routes/message.route.js";
 import path from 'path';
 import { login } from "./controllers/user.controller.js";
+import { Post } from "./models/post.model.js";
 
 dotenv.config({});
 
@@ -68,6 +69,28 @@ app.get('/edit', (req, res)=>{
 
 app.get('/new-post', (req, res)=>{
     res.render('newPost.ejs');
+});
+
+app.get('/delete-post/:id', (req,res)=>{
+    let postId = req.params.id;
+    res.render("deletePost.ejs", {postId});
+});
+
+app.get('/edit-post/:id', async (req,res)=>{
+    try {
+        const postId = req.params.id;
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).send('Post not found');
+        }
+        res.render('editPost', { 
+            postId: post._id, 
+            postBio: post.caption 
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error retrieving post');
+    }
 });
 
 

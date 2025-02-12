@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Background styling */
+        body {
+            background-color: #000000; /* Black background */
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Centered Edit Post Box */
+        .edit-post-box {
+            background-color: #809881; /* Light Green */
+            padding: 30px 50px;
+            border-radius: 10px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Heading Text */
+        .edit-post-box h2 {
+            color: #283227; /* Dark Green */
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Input styling */
+        .bio-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #535D51; /* Mid Green */
+            border-radius: 5px;
+            background-color: #fff;
+            color: #283227; /* Dark Green */
+            margin-bottom: 20px;
+        }
+
+        /* Button Styling */
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Cancel Button */
+        .cancel-btn {
+            background-color: #535D51; /* Mid Green */
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: #283227; /* Dark Green */
+        }
+
+        /* Save Button */
+        .save-btn {
+            background-color: #535D51 ; /* Dark Green */
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #283227 ; /* Mid Green */
+        }
+
+        /* Flexbox for positioning buttons */
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="edit-post-box">
+        <h2>Edit Post Bio</h2>
+        
+        <form action="/api/v1/post/edit/<%= postId %>" method="POST">
+            <input 
+                type="text" 
+                name="bio" 
+                class="bio-input" 
+                placeholder="Enter new bio..." 
+                value="<%= postBio %>" 
+                required 
+            />
+
+            <div class="buttons-container">
+                <a style="text-decoration: none;" href="/profile" class="button cancel-btn">Cancel</a>
+                <button type="submit" class="button save-btn">Save</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

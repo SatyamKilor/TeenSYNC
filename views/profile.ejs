@@ -279,105 +279,35 @@
         </div>
       </div>
 
-      <!-- User's Posts -->
-      <div class="feed" id="user-posts">
-        <h3>Your Posts</h3>
-        <div class="post-gallery">
-          <!-- Dynamically Loaded Posts will appear here -->
+     <!-- User's Posts -->
+<div class="feed" id="user-posts">
+  <h3>Your Posts</h3>
+  <div class="post-gallery">
+    <% let posts = user.posts; %>
+
+    <% if(posts.length === 0){ %>
+      <h2 style="color: rgba(86, 86, 86, 0.732); margin-top: 2vh;">You have No Posts Yet</h2>
+    <% } %>
+
+    <% posts.map((post) => { %>
+      <div class="post">
+        <img src="<%= post.contents %>" class="post-img" alt="Post Image">
+        <div class="post-details">
+          <p class="post-username"><%= user.username %></p>
+          <p class="post-caption"><%= post.caption %></p>
+          <div class="post-actions">
+            <i class="ri-thumb-up-line"></i>
+            <i class="ri-chat-1-line"></i>
+            <i class="ri-bookmark-line"></i>
+            <a style="text-decoration: none;" href="/edit-post/<%= post._id %>"><i class="ri-pencil-fill"></i></a>
+            <a style="text-decoration: none;" href="/delete-post/<%= post._id %>"> <i class="ri-delete-bin-6-line"></i> </a>
+          </div>
         </div>
       </div>
-
-    </div>
+    <% }); %>
   </div>
+</div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", async function() {
-      // Properly embed the user object using EJS
-      const user = <%- JSON.stringify(user) %>;
-
-      try {
-        const response = await fetch('/api/v1/post/userpost/all', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + user.token
-          }
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          const posts = data.posts;
-          const postGallery = document.querySelector('.post-gallery');
-          postGallery.innerHTML = ""; // Clear existing posts
-
-          // Dynamically render the posts
-          posts.forEach(post => {
-            const postElement = document.createElement('div');
-            postElement.classList.add('post');
-
-            const postImage = document.createElement('img');
-            postImage.classList.add('post-img');
-            postImage.src = post.contents; // Assuming 'contents' has the image URL
-            postElement.appendChild(postImage);
-
-            const postDetails = document.createElement('div');
-            postDetails.classList.add('post-details');
-
-            const postUsername = document.createElement('p');
-            postUsername.classList.add('post-username');
-            postUsername.textContent = user.username;  // Assuming 'username' in post object
-            postDetails.appendChild(postUsername);
-
-            const postCaption = document.createElement('p');
-            postCaption.classList.add('post-caption');
-            postCaption.textContent = post.caption;  // Assuming 'caption' in post object
-            postDetails.appendChild(postCaption);
-
-            const postActions = document.createElement('div');
-            postActions.classList.add('post-actions');
-
-            // Like Button
-            const likeButton = document.createElement('i');
-            likeButton.classList.add('ri-thumb-up-line');
-            if (post.liked) {
-              likeButton.classList.add('liked');
-              likeButton.classList.remove('ri-thumb-up-line');
-              likeButton.classList.add('ri-thumb-up-fill');
-            }
-            postActions.appendChild(likeButton);
-
-            // Comment Button
-            const commentButton = document.createElement('i');
-            commentButton.classList.add('ri-chat-1-line');
-            postActions.appendChild(commentButton);
-
-            // Bookmark Button
-            const bookmarkButton = document.createElement('i');
-            bookmarkButton.classList.add('ri-bookmark-line');
-            if (post.bookmarked) {
-              bookmarkButton.classList.add('bookmarked');
-              bookmarkButton.classList.remove('ri-bookmark-line');
-              bookmarkButton.classList.add('ri-bookmark-fill');
-            }
-            postActions.appendChild(bookmarkButton);
-
-            postDetails.appendChild(postActions);
-            postElement.appendChild(postDetails);
-
-            postGallery.appendChild(postElement);
-          });
-        } else {
-          console.error("Failed to fetch posts");
-        }
-      } catch (err) {
-        console.error("Error fetching posts: ", err);
-      }
-    });
-    
-
-    
-
-  </script>
+  
 </body>
 </html>
