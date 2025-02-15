@@ -176,7 +176,7 @@
 
     .post-actions {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       align-items: center;
       margin-top: 15px;
     }
@@ -249,78 +249,122 @@
       </nav>
     </div>
 
-    <!-- Main Content Section -->
-    <div class="main-content">
-      <div class="profile-header">
-        <div class="profile-info">
-          <img src="<%= user.profilePicture %>" alt="Profile Picture" class="profile-img">
-          <div class="profile-details">
-            <h2 class="username"><%= user.username %></h2>
-            <p class="bio"><%= user.bio %></p>
-            <!-- Follow/Unfollow Button -->
-            <form action="/api/v1/user/followOrUnfollow/<%= user._id %>" method="POST">
-              <button type="submit" class="follow-btn">
-                <% let isFollowing = false;%>
-                <% let userkiID = loggedUser._id.toString(); %>
-                <% user.followers.map((follower)=>{ %>
-                  <% if(userkiID === follower._id.toString()){ %>
-                     <% isFollowing = true; %>
-                  <% } %>
-                <% }); %>
-                <% if(isFollowing){ %>
-                  Unfollow
-                <% } else { %>
-                  Follow
+   <!-- Main Content Section -->
+   <div class="main-content">
+    <div class="profile-header">
+      <div class="profile-info">
+        <img src="<%= user.profilePicture %>" alt="Profile Picture" class="profile-img">
+        <div class="profile-details">
+          <h2 class="username"><%= user.username %></h2>
+          <p class="bio"><%= user.bio %></p>
+          <!-- Follow/Unfollow Button -->
+          <form action="/api/v1/user/followOrUnfollow/<%= user._id %>" method="POST">
+            <button type="submit" class="follow-btn">
+              <% let isFollowing = false;%>
+              <% let userkiID = loggedUser._id.toString(); %>
+              <% user.followers.map((follower)=>{ %>
+                <% if(userkiID === follower._id.toString()){ %>
+                   <% isFollowing = true; %>
                 <% } %>
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <div class="profile-stats">
-          <div class="stat">
-            <strong><%= user.posts.length %></strong>
-            <p>Posts</p>
-          </div>
-          <div class="stat">
-            <strong><%= user.followers.length %></strong>
-            <p>Followers</p>
-          </div>
-          <div class="stat">
-            <strong><%= user.following.length %></strong>
-            <p>Following</p>
-          </div>
+              <% }); %>
+              <% if(isFollowing){ %>
+                Unfollow
+              <% } else { %>
+                Follow
+              <% } %>
+            </button>
+          </form>
         </div>
       </div>
 
-     <!-- User's Posts -->
+      <div class="profile-stats">
+        <div class="stat">
+          <strong><%= user.posts.length %></strong>
+          <p>Posts</p>
+        </div>
+        <div class="stat">
+          <strong><%= user.followers.length %></strong>
+          <p>Followers</p>
+        </div>
+        <div class="stat">
+          <strong><%= user.following.length %></strong>
+          <p>Following</p>
+        </div>
+      </div>
+    </div>
+
+   <!-- User's Posts -->
 <div class="feed" id="user-posts">
-  <h3>User's Posts</h3>
-  <div class="post-gallery">
-    <% let posts = user.posts; %>
+<h3>User's Posts</h3>
+<div class="post-gallery">
+  <% let posts = user.posts; %>
 
-    <% if(posts.length === 0){ %>
-      <h2 style="color: rgba(86, 86, 86, 0.732); margin-top: 2vh;">No Posts Available</h2>
-    <% } %>
+  <% if(posts.length === 0){ %>
+    <h2 style="color: rgba(86, 86, 86, 0.732); margin-top: 2vh;">No Posts Available</h2>
+  <% } %>
 
-    <% posts.map((post) => { %>
-      <div class="post">
-        <img src="<%= post.contents %>" class="post-img" alt="Post Image">
-        <div class="post-details">
-          <p class="post-username"><%= user.username %></p>
-          <p class="post-caption"><%= post.caption %></p>
-          <div class="post-actions">
-            <i class="ri-thumb-up-line"></i>
-            <i class="ri-chat-1-line"></i>
-            <i class="ri-bookmark-line"></i>
-          </div>
+  <% posts.map((post) => { %>
+    <div class="post">
+      <img src="<%= post.contents %>" class="post-img" alt="Post Image">
+      <div class="post-details">
+        <p class="post-username"><%= user.username %></p>
+        <p class="post-caption"><%= post.caption %></p>
+        <div class="post-actions">
+          <% let upvoted = post.upvotes.find(upvote => upvote.toString() === loggedUser._id.toString()); %>
+          <% if (upvoted) { %>
+              <i class="ri-thumb-up-fill" data-post-id="<%= post._id %>"><%= post.upvotes.length %></i>
+          <% } else { %>
+              <i class="ri-thumb-up-line" data-post-id="<%= post._id %>"><%= post.upvotes.length %></i> 
+          <% } %>
+
+          <i class="ri-chat-1-line"></i>
+
         </div>
       </div>
-    <% }); %>
+    </div>
+  <% }); %>
+</div>
+</div>
+
   </div>
 </div>
 
-    </div>
-  </div>
+<script>
+  // Attach event listener to each like button
+  const upvoteBtns = document.querySelectorAll('.ri-thumb-up-line');
+
+  upvoteBtns.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const postId = btn.getAttribute('data-post-id'); 
+      let success = await fetch(`/api/v1/post/${postId}/upvote`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`, // Assuming JWT in localStorage
+            }
+          });
+          window.location.reload();
+    });
+  });
+  
+  // Attach event listener to each like button
+  const unUpvoteBtns = document.querySelectorAll('.ri-thumb-up-fill');
+
+  unUpvoteBtns.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const postId = btn.getAttribute('data-post-id'); 
+      let success = await fetch(`/api/v1/post/${postId}/unupvote`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            }
+          });
+          window.location.reload();
+        });
+  });
+
+
+</script>
 </body>
 </html>

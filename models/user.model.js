@@ -8,8 +8,7 @@ const userSchema = new mongoose.Schema({
     bio: {type: String, max: 50, default: ""},
     followers: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
     following: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
-    posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
-    bookmarks:[{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}]
+    posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}]
 }, {timestamps: true});
 
 export const User = mongoose.model('User', userSchema);

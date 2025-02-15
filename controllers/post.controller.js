@@ -206,6 +206,13 @@ export const upvote = async(req, res)=>{
             success: false
         });
 
+        if(post.upvotes.includes(upvoterId)){
+            return res.status(404).json({
+                message: "Already Liked The Post",
+                success: "false"
+            });
+        }
+
         //upvote logic starts here bhai
         await post.updateOne({$addToSet: {upvotes: upvoterId}});
         await post.save();
@@ -371,40 +378,6 @@ export const deletePost = async(req, res)=>{
                return res.redirect('/profile'); // Redirect to the user's profile page after update
 
         
-    }
-    catch(err){
-        console.log(err);
-    }
-};
-
-export const bookmarkPost = async (req, res)=>{
-    try{
-        const postId = req.params.id;
-        const userId = req.id;
-        const post = await Post.findById(postId);
-        if(post) return res.status(4040).json({
-            message: "Post not found",
-            success: false
-        });
-
-        const user = await User.findById(userId);
-        if(user.bookmarks.includes(post._id)){
-            await user.updateOne({$pull: {bookmarks: post._id}});
-            await user.save();
-            return res.status(200).json({
-                type: 'unsaved',
-                message: 'Post removed from bookmarks',
-                success: true
-            });
-        } else {
-            await user.updateOne({$addToSet: {bookmarks: post._id}});
-            await user.save();
-            return res.status(200).json({
-                type: 'saved',
-                message: 'Post added to bookmarks',
-                success: true
-            });
-        }
     }
     catch(err){
         console.log(err);
