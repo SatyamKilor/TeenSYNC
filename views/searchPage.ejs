@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unveiled - Search Users</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+</head>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #283227;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.ri-home-4-line{
+    font-size: 3vh;
+    cursor: pointer;
+    color: #809881 ;
+    transition: 0.3s;
+}
+
+.ri-home-4-line:hover{
+    color: white;
+    transition: 0.3s;
+}
+
+
+.search-container {
+    max-width: 600px;
+    margin: 50px auto;
+    text-align: center;
+    padding: 20px;
+    background-color: #535D51;
+    border-radius: 10px;
+}
+
+.title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.search-input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #809881;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #283227;
+    color: white;
+}
+
+.search-input::placeholder {
+    color: #809881;
+}
+
+.search-results {
+    margin-top: 20px;
+}
+
+.user-result {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #809881;
+    border-radius: 5px;
+    color: #283227;
+    font-size: 1.1rem;
+    transition: 0.2s;
+    justify-content: flex-start;
+}
+.user-result img{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.user-result p{
+    flex-grow: 1;
+    text-align: center;
+    margin: 0;
+}
+
+.user-result:hover {
+    transition: 0.5s;
+    background-color: #465447;
+    color: white;
+    cursor: pointer;
+}
+
+
+</style>
+<body>
+    <div class="search-container">
+        <i class="ri-home-4-line"></i>
+        <h1 class="title">Search Users</h1>
+        <input type="text" id="search-input" class="search-input" placeholder="Search for users..." onkeyup="searchUsers()">
+        <div id="search-results" class="search-results">
+
+            <div id="search-results" class="search-results">
+            </div>
+
+
+        </div>
+    </div>
+
+    <script>
+
+        const homeBtn = document.querySelector(".ri-home-4-line");
+        homeBtn.addEventListener('click', ()=>{
+            window.location.href = "/profile";            
+        });
+
+
+
+        const users = <%- JSON.stringify(users) %>;
+        const userID = "<%= userID %>"; 
+    
+        function searchUsers() {
+            const query = document.getElementById("search-input").value.toLowerCase();
+            const resultsContainer = document.getElementById("search-results");
+    
+            resultsContainer.innerHTML = "";
+    
+            if (query) {
+                const filteredUsers = users.filter(user =>
+                    user.username.toLowerCase().includes(query)
+                );
+    
+                filteredUsers.forEach(user => {
+                    const userElement = document.createElement("div");
+                    userElement.classList.add("user-result");
+    
+                    const userImage = document.createElement("img");
+                    userImage.src = user.profilePicture || "https://via.placeholder.com/40";
+                    userImage.alt = "Profile Picture";
+    
+                    const userName = document.createElement("p");
+                    userName.textContent = user.username;
+    
+                    userElement.appendChild(userImage);
+                    userElement.appendChild(userName);
+    
+
+                    userElement.addEventListener("click", () => {
+                        if (user._id === userID) {
+                            window.location.href = "/profile"; 
+                        } else {
+                            window.location.href = `/${user._id}/profile`;
+                        }
+                    });
+    
+                    resultsContainer.appendChild(userElement);
+                });
+    
+
+                if (filteredUsers.length === 0) {
+                    resultsContainer.innerHTML = "<p>No users found</p>";
+                }
+            }
+        }
+    </script>
+    
+</body>
+</html>

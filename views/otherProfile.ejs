@@ -103,7 +103,7 @@
       margin-top: 10px;
     }
 
-    .edit-btn {
+    .follow-btn {
       margin-top: 10px;
       padding: 10px 20px;
       background-color: #809881;
@@ -114,7 +114,7 @@
       font-size: 1rem;
     }
 
-    .edit-btn:hover {
+    .follow-btn:hover {
       background-color: #6a7c60;
     }
 
@@ -257,8 +257,11 @@
           <div class="profile-details">
             <h2 class="username"><%= user.username %></h2>
             <p class="bio"><%= user.bio %></p>
-            <form action="/edit" method="get">
-              <button class="edit-btn">Edit Profile</button>
+            <!-- Follow/Unfollow Button -->
+            <form action="<%= user.isFollowing ? '/unfollow' : '/follow' %>" method="POST">
+              <button type="submit" class="follow-btn">
+                <%= user.isFollowing ? 'Unfollow' : 'Follow' %>
+              </button>
             </form>
           </div>
         </div>
@@ -281,12 +284,12 @@
 
      <!-- User's Posts -->
 <div class="feed" id="user-posts">
-  <h3>Your Posts</h3>
+  <h3>User's Posts</h3>
   <div class="post-gallery">
     <% let posts = user.posts; %>
 
     <% if(posts.length === 0){ %>
-      <h2 style="color: rgba(86, 86, 86, 0.732); margin-top: 2vh;">You have No Posts Yet</h2>
+      <h2 style="color: rgba(86, 86, 86, 0.732); margin-top: 2vh;">No Posts Available</h2>
     <% } %>
 
     <% posts.map((post) => { %>
@@ -308,6 +311,7 @@
   </div>
 </div>
 
-  
+    </div>
+  </div>
 </body>
 </html>

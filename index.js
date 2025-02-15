@@ -9,6 +9,7 @@ import messageRoute from "./routes/message.route.js";
 import path from 'path';
 import { login } from "./controllers/user.controller.js";
 import { Post } from "./models/post.model.js";
+import { User } from "./models/user.model.js";
 
 dotenv.config({});
 
@@ -55,6 +56,13 @@ app.get("/profile", (req, res) => {
     res.render("profile.ejs", { user: user });  // Pass the user data to the EJS template
 });
 
+app.get('/:id/profile', async (req, res) => {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    
+    res.render('otherProfile.ejs', { user });
+});
+
 
 app.get('/edit', (req, res)=>{
     const userCookie = req.cookies.user;
@@ -91,6 +99,17 @@ app.get('/edit-post/:id', async (req,res)=>{
         console.error(err);
         res.status(500).send('Error retrieving post');
     }
+});
+
+app.get('/search', async (req, res)=>{
+    const users = await User.find();  // Fetch all users
+   
+    const userCookie = req.cookies.user;
+    const user = JSON.parse(userCookie);
+    const userID = user._id;
+    
+    
+    res.render('searchPage.ejs', {users, userID});
 });
 
 
