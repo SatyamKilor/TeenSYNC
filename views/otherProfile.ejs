@@ -258,9 +258,20 @@
             <h2 class="username"><%= user.username %></h2>
             <p class="bio"><%= user.bio %></p>
             <!-- Follow/Unfollow Button -->
-            <form action="<%= user.isFollowing ? '/unfollow' : '/follow' %>" method="POST">
+            <form action="/api/v1/user/followOrUnfollow/<%= user._id %>" method="POST">
               <button type="submit" class="follow-btn">
-                <%= user.isFollowing ? 'Unfollow' : 'Follow' %>
+                <% let isFollowing = false;%>
+                <% let userkiID = loggedUser._id.toString(); %>
+                <% user.followers.map((follower)=>{ %>
+                  <% if(userkiID === follower._id.toString()){ %>
+                     <% isFollowing = true; %>
+                  <% } %>
+                <% }); %>
+                <% if(isFollowing){ %>
+                  Unfollow
+                <% } else { %>
+                  Follow
+                <% } %>
               </button>
             </form>
           </div>
@@ -302,8 +313,6 @@
             <i class="ri-thumb-up-line"></i>
             <i class="ri-chat-1-line"></i>
             <i class="ri-bookmark-line"></i>
-            <a style="text-decoration: none;" href="/edit-post/<%= post._id %>"><i class="ri-pencil-fill"></i></a>
-            <a style="text-decoration: none;" href="/delete-post/<%= post._id %>"> <i class="ri-delete-bin-6-line"></i> </a>
           </div>
         </div>
       </div>

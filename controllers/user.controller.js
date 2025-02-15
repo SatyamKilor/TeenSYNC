@@ -263,58 +263,92 @@ export const getSuggestedUsers = async(req, res) =>{
     }
 };
 
-export const followOrUnfollowUser = async(req, res)=>{
-    try{
-        const followKarneWala = req.id; //main user
-        const jiskoFollowKarunga = req.params.id; //user to follow
+export const followOrUnfollowUser = async (req, res) => {
+    try {
+        const followKarneWala = req.id; 
+        const jiskoFollowKarunga = req.params.id;
 
-        if(followKarneWala === jiskoFollowKarunga){
+        if (followKarneWala === jiskoFollowKarunga) {
             return res.status(400).json({
                 message: "You cannot follow yourself",
                 success: false,
             });
         }
 
-        const user = await User.findById(followKarneWala);
-        const targetUser = await User.findById(jiskoFollowKarunga);
+        const user = await User.findById(followKarneWala); 
+        const targetUser = await User.findById(jiskoFollowKarunga); 
 
-        if(!user || !targetUser){
+        if (!user || !targetUser) {
             return res.status(400).json({
                 message: "User not found",
                 success: false,
-            }); 
+            });
         }
 
-        const isFollowing = user.following.includes(jiskoFollowKarunga);
-        if(isFollowing){
-            await Promise.all([
-                User.updateOne({_id: followKarneWala}, {$pull: {following: jiskoFollowKarunga}}),
-            
-                User.updateOne({_id: jiskoFollowKarunga}, {$pull: {followers: followKarneWala}}),
-            ])
+        const isFollowing = user.following.includes(jiskoFollowKarunga); 
 
-            return res.status(200).json({
-                message: "Unfollowed Successfully",
-                success: true,
-            });
+        if (isFollowing) {
+          
+            await Promise.all([
+                User.updateOne({ _id: followKarneWala }, { $pull: { following: jiskoFollowKarunga } }),
+                User.updateOne({ _id: jiskoFollowKarunga }, { $pull: { followers: followKarneWala } }),
+            ]);
         } else {
+
             await Promise.all([
-                User.updateOne({_id: followKarneWala}, {$push: {following: jiskoFollowKarunga}}),
-            
-                User.updateOne({_id: jiskoFollowKarunga}, {$push: {followers: followKarneWala}}),
-            ])
-            return res.status(200).json({
-                message: "Followed Successfully",
-                success: true,
-            });
+                User.updateOne({ _id: followKarneWala }, { $push: { following: jiskoFollowKarunga } }),
+                User.updateOne({ _id: jiskoFollowKarunga }, { $push: { followers: followKarneWala } }),
+            ]);
         }
 
-    }
-    catch(err){
-        console.log(err);
-        
+        const updatedUser = await User.findById(followKarneWala).select('-password'); 
+
+  
+        const updatedUserData = {
+            _id: updatedUser._id,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            profilePicture: updatedUser.profilePicture,
+            bio: updatedUser.bio,
+            followers: updatedUser.followers,
+            following: updatedUser.following,
+            posts: await Promise.all(
+                updatedUser.posts.map(async (postId) => {
+                    const post = await Post.findById(postId);
+                    if (post.author.equals(updatedUser._id)) {
+                        return post;
+                    }
+                    return null;
+                })
+            ) || []
+        };
+
+        res.cookie('user', JSON.stringify(updatedUserData), {
+            httpOnly: true,
+            sameSite: 'strict',
+            maxAge: 1 * 24 * 60 * 60 * 1000,
+        });
+
+        const newToken = jwt.sign(
+            { userId: updatedUser._id }, 
+            process.env.SECRET_KEY,  
+            { expiresIn: '1h' } 
+        );
+
+        res.cookie('token', newToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+
+        return res.redirect(`/${jiskoFollowKarunga}/profile`);
+
+    } catch (error) {
+        console.error("Error in followOrUnfollowUser:", error);
+        return res.status(500).json({
+            message: "An error occurred while following/unfollowing the user",
+            success: false,
+        });
     }
 };
+
+
 
 export const deleteAccount = async(req, res) =>{
     try{

@@ -58,9 +58,14 @@ app.get("/profile", (req, res) => {
 
 app.get('/:id/profile', async (req, res) => {
     const userId = req.params.id;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate({
+        path: 'posts'
+    });
+
+    const loggedUserCookie = req.cookies.user;
+    const loggedUser = JSON.parse(loggedUserCookie);
     
-    res.render('otherProfile.ejs', { user });
+    res.render('otherProfile.ejs', { user, loggedUser });
 });
 
 
