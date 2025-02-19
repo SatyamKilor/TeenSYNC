@@ -238,10 +238,10 @@
     <div class="sidebar">
       <nav>
         <ul>
-          <li><a href="#" class="sidebar-link">Home</a></li>
+          <li><a href="/home" class="sidebar-link">Home</a></li>
           <li><a href="/search" class="sidebar-link">Search</a></li>
           <li><a href="#" class="sidebar-link">Messages</a></li>
-          <li><a href="#" class="sidebar-link">Notifications</a></li>
+          <li><a href="#" class="sidebar-link">Discussion</a></li>
           <li><a href="/new-post" class="sidebar-link">Create New Post</a></li>
           <li><a href="/profile" class="sidebar-link">Profile</a></li>
           <li><a href="/api/v1/user/logout" class="sidebar-link logout">Log Out</a></li>
@@ -314,10 +314,8 @@
           <% if (upvoted) { %>
               <i class="ri-thumb-up-fill" data-post-id="<%= post._id %>"><%= post.upvotes.length %></i>
           <% } else { %>
-              <i class="ri-thumb-up-line" data-post-id="<%= post._id %>"><%= post.upvotes.length %></i> 
+              <i class="ri-thumb-up-line" data-post-id="<%= post._id %>">   <%= post.upvotes.length %></i> 
           <% } %>
-
-          <i class="ri-chat-1-line"></i>
 
         </div>
       </div>

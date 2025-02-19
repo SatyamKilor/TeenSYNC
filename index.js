@@ -31,6 +31,16 @@ app.get("/", (req, res)=>{
     return res.render("index.ejs"); 
 });
 
+app.get("/home", async(req, res)=>{
+
+    const posts = await Post.find();
+    const users = await User.find();
+    const loggedUserCookie = req.cookies.user;
+    const loggedUser = JSON.parse(loggedUserCookie);
+
+    return res.render("home.ejs", {posts, users, loggedUser}); 
+});
+
 app.get("/register", (req, res)=>{
     return res.render("register.ejs"); 
 });
@@ -53,8 +63,11 @@ app.get("/profile", (req, res) => {
     }
 
     const user = JSON.parse(userCookie); // Parse the user data from cookie
+
     res.render("profile.ejs", { user: user });  // Pass the user data to the EJS template
 });
+
+
 
 app.get('/:id/profile', async (req, res) => {
     const userId = req.params.id;

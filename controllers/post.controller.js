@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import getDataUri from "../utils/dataUri.js";
 import {Post} from "../models/post.model.js"
 import {User} from "../models/user.model.js";
-import { Comment } from "../models/comment.model.js";
 
 export const addNewPost = async (req, res)=>{
     try{
@@ -256,63 +255,6 @@ export const unUpvote = async(req, res)=>{
     }
 };
 
-export const addComment = async(req, res)=>{
-    try{
-        const postId = req.params.id;
-        const commentAuthorId = req.id;
-        const {text} = req.body;
-        const post = await Post.findById(postId);
-
-        if(!text) return res.status(400).json({
-            message: "Comment cannot be empty",
-            success: false
-        });
-
-        const comment = await Comment.create({
-            text,
-            author: commentAuthorId,
-            post: postId
-        }).populate({
-            path: 'author',
-            select: "username, profilePicture"
-        });
-        
-        post.comments.push(comment._id);
-        await post.save();
-
-        return res.status(201).json({
-            message: "Comment added",
-            comment,
-            success: true
-        });
-    }
-    catch(err){
-        console.log(err);
-    }
-};
-
-export const getComments = async(req, res)=>{
-    try{
-        const postId = req.params.id;
-        const post = Post.findById(postId);
-
-        const comments = await Comment.find({post}).populate('author', 'username, profilePicture');
-
-        if(!comments) return res.status(404).json({
-            message: 'No comments found',
-            success: false
-        });
-
-        return res.status(200).json({
-            message: "Found all comments",
-            comments,
-            success: true
-        });
-    }
-    catch(err){
-        console.log(err);
-    }
-};
 
 export const deletePost = async(req, res)=>{
     try{
@@ -337,7 +279,6 @@ export const deletePost = async(req, res)=>{
         user.posts = user.posts.filter(id => id.toString() !== postId);
         await user.save();
 
-        await Comment.deleteMany({post: postId});
        // Update the user cookie with the new user data
                const updatedUser = {
                    _id: user._id,
