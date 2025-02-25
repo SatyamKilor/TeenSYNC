@@ -1,15 +1,20 @@
 import express, { urlencoded } from "express";
-import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.route.js";
 import messageRoute from "./routes/message.route.js";
-import path from 'path';
 import { login } from "./controllers/user.controller.js";
 import { Post } from "./models/post.model.js";
 import { User } from "./models/user.model.js";
+import { Server } from "socket.io"; // Import the named export `Server`
+import http from "http";
+import { Conversation } from "./models/conversation.model.js";
+import { Message } from "./models/message.model.js";
+
+
+
 
 dotenv.config({});
 
@@ -17,11 +22,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
+const server = http.createServer(app);  // Your Express app
+const io = new Server(server);  // Create the socket.io server instance
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({extended: true}));
 
-// file setup to use ejs
 app.set('view engine', 'ejs');
 
 
@@ -31,6 +38,7 @@ app.get("/", (req, res)=>{
     return res.render("index.ejs"); 
 });
 
+
 app.get("/home", async(req, res)=>{
 
     const posts = await Post.find();
@@ -39,6 +47,28 @@ app.get("/home", async(req, res)=>{
     const loggedUser = JSON.parse(loggedUserCookie);
 
     return res.render("home.ejs", {posts, users, loggedUser}); 
+});
+
+
+app.get('/chat', async (req, res) => {
+
+    const loggedUserCookie = req.cookies.user;
+    const loggedUser = JSON.parse(loggedUserCookie);
+    const otherUsers = await User.find({ _id: { $ne: loggedUser._id } });
+    
+    res.render('testChat.ejs', {loggedUser, otherUsers});
+});
+
+app.get('/chat/:id', async (req, res) => {
+
+    const loggedUserCookie = req.cookies.user;
+    const loggedUser = JSON.parse(loggedUserCookie);
+    const otherUsers = await User.find({ _id: { $ne: loggedUser._id } });
+    const recUser = await User.findById(req.params.id);
+    const {conversationId} = req.query;
+    const conversation = await Conversation.findById(conversationId).populate('messages participants');
+    
+    res.render('testChatwithMessages.ejs', {loggedUser , recUser, otherUsers, conversation});
 });
 
 app.get("/register", (req, res)=>{
@@ -66,7 +96,6 @@ app.get("/profile", (req, res) => {
 
     res.render("profile.ejs", { user: user });  // Pass the user data to the EJS template
 });
-
 
 
 app.get('/:id/profile', async (req, res) => {
@@ -130,20 +159,12 @@ app.get('/search', async (req, res)=>{
     res.render('searchPage.ejs', {users, userID});
 });
 
-
-const corsOptions = {
-    origin: 'http://localhost:5173',
-    credentials: true,
-};
-
-app.use(cors(corsOptions));
-
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
 app.use("/api/v1/messgae", messageRoute);
 
 
-app.listen(PORT, ()=>{
+server.listen(PORT, ()=>{
     connectDB();
     console.log(`Server listening on port ${PORT}`);
 });

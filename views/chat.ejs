@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat - Unveiled</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      height: 100vh;
+    }
+
+    .wrapper {
+      display: flex;
+      width: 100%;
+    }
+
+    /* Sidebar Section */
+    .sidebar {
+      width: 250px;
+      background-color: #283227;
+      color: #fff;
+      padding: 20px;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .sidebar nav ul {
+      list-style-type: none;
+    }
+
+    .sidebar nav ul li {
+      margin: 20px 0;
+    }
+
+    .sidebar-link {
+      color: #809881;
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: block;
+    }
+
+    .sidebar-link:hover {
+      text-decoration: underline;
+    }
+
+    .logout {
+      color: #f44336;
+    }
+
+    /* Main Content Section */
+    .main-content {
+      display: flex;
+      flex-grow: 1;
+      padding: 20px;
+    }
+
+    /* Followers List */
+    .followers-list {
+      width: 250px;
+      background-color: #fff;
+      margin-right: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+
+    .followers-list ul {
+      list-style-type: none;
+    }
+
+    .followers-list li {
+      padding: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #283227;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .followers-list li:hover {
+      background-color: #f0f0f0;
+    }
+
+    .chat-area {
+      flex-grow: 1;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+
+    .chat-header {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #283227;
+      margin-bottom: 20px;
+    }
+
+    .messages {
+      margin-bottom: 20px;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 10px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .message.you {
+      background-color: #809881;
+      color: white;
+      margin-left: auto;
+    }
+
+    .message.other {
+      background-color: #e3e3e3;
+      color: #283227;
+    }
+
+    .message-input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      font-size: 1rem;
+    }
+
+    .send-button {
+      background-color: #809881;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    .send-button:hover {
+      background-color: #6a7c60;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Sidebar Section -->
+    <div class="sidebar">
+      <nav>
+        <ul>
+          <li><a href="/home" class="sidebar-link">Home</a></li>
+          <li><a href="/search" class="sidebar-link">Search</a></li>
+          <li><a href="/chat" class="sidebar-link">Messages</a></li>
+          <li><a href="/new-post" class="sidebar-link">Create New Post</a></li>
+          <li><a href="/profile" class="sidebar-link">Profile</a></li>
+          <li><a href="/api/v1/user/logout" class="sidebar-link logout">Log Out</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Main Content Section -->
+    <div class="main-content">
+      <!-- Followers List -->
+      <div class="followers-list">
+        <h3>Your Following</h3>
+        <ul id="followersList">
+          <!-- Followers will be dynamically loaded here -->
+          <% followers.forEach(follower => { %>
+            <li onclick="startChat('<%= follower.username %>')">
+              <!-- <%= follower.username %> -->
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="chat-area">
+        <div class="chat-header" id="chatHeader">Select a user to chat</div>
+        <div class="messages" id="messageArea">
+          <!-- Messages will be displayed here -->
+        </div>
+        <textarea class="message-input" id="messageInput" placeholder="Type your message..."></textarea>
+        <button class="send-button" id="sendMessageButton">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const followersList = document.getElementById('followersList');
+    const chatHeader = document.getElementById('chatHeader');
+    const messageArea = document.getElementById('messageArea');
+    const messageInput = document.getElementById('messageInput');
+    const sendMessageButton = document.getElementById('sendMessageButton');
+    let currentChatUser = null;
+
+    // Initialize the followers list (for demo, will be populated on server)
+    <% followers.forEach(follower => { %>
+      const li = document.createElement('li');
+      li.textContent = '<%= follower.username %>';
+      li.onclick = () => startChat('<%= follower.username %>');
+      followersList.appendChild(li);
+    <% }) %>
+
+    // Start a new chat when a follower is clicked
+    function startChat(user) {
+      currentChatUser = user;
+      chatHeader.textContent = `Chat with ${user}`;
+      messageArea.innerHTML = ''; // Clear previous messages
+    }
+
+    // Send message to the selected chat
+    sendMessageButton.addEventListener('click', () => {
+      const message = messageInput.value;
+      if (message.trim()) {
+        // Emit message to the server
+        socket.emit('sendMessage', currentChatUser, message);
+        displayMessage('You', message);
+        messageInput.value = ''; // Clear the input field
+      }
+    });
+
+    // Display message in the chat area
+    function displayMessage(sender, message) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message');
+      if (sender === 'You') {
+        messageDiv.classList.add('you');
+      } else {
+        messageDiv.classList.add('other');
+      }
+      messageDiv.textContent = `${sender}: ${message}`;
+      messageArea.appendChild(messageDiv);
+      messageArea.scrollTop = messageArea.scrollHeight; // Scroll to the bottom
+    }
+
+    // Listen for incoming messages
+    socket.on('receiveMessage', (data) => {
+      if (data.sender === currentChatUser) {
+        displayMessage(data.sender, data.message);
+      }
+    });
+  </script>
+</body>
+</html>

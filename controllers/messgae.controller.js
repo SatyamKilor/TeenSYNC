@@ -20,7 +20,7 @@ export const sendMessage = async (req, res)=>{
 
         const newMessage = await Message.create({
             senderId,
-            receiverId,
+            recieverId,
             message
         })
 
@@ -30,10 +30,9 @@ export const sendMessage = async (req, res)=>{
         //implement socket.io for realtime data transfer
 
 
-        return res.status(201).json({
-            success: true,
-            newMessage
-        });
+       
+
+        return res.redirect(`/chat/${recieverId}?conversationId=${conversation._id}`);
 
     }
     catch(err){
@@ -43,24 +42,23 @@ export const sendMessage = async (req, res)=>{
 };
 
 export const getMessage = async(req, res)=>{
-    try{
+    try {
         const senderId = req.id;
         const receiverId = req.params.id;
-        const conversation = await Conversation.find({
-            participants: {$all: [senderId, receiverId]}
+
+        const conversation = await Conversation.findOne({
+            participants: { $all: [senderId, receiverId] }
         });
 
-        if(!conversation){
+        if (!conversation) {
             return res.status(200).json({
                 messages: [],
                 success: true
             });
         }
 
-        return res.status(200).json({
-            success: true,
-            messages: conversation?.messages
-        });
+        return res.redirect(`/chat/${receiverId}?conversationId=${conversation._id}`);
+
     }
     catch(err){
         console.log(err);

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Chatting</title>
+</head>
+
+<style>
+    .otherUsersList{
+        height: 100%;
+        width: 30%;
+        /* background-color: red; */
+        border-right: 2px solid black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .userCard{
+        height: 15%;
+        width: 90%;
+        background-color: rgb(142, 177, 142);
+        border-radius: 20px;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        cursor: pointer;
+        text-decoration: none;
+        color: black;
+        transition: 0.3s;
+    }
+
+    .userCard:hover{
+        background-color: rgb(81, 106, 81);
+        transition: 0.3s;
+    }
+
+    .userCard img{
+        height: 80%;
+        width: 25%;
+        border-radius: 50%;
+        border: 2px solid black;
+    }
+
+    .chatArea{
+        height: 100%;
+        width: 70%;
+        border-radius: 20px;
+    }
+
+    .chatArea .top{
+        position: relative;
+        height: 20%;
+        width: 100%;
+        border-bottom: 2px solid black;
+    }
+
+    .chatArea .bottom{
+        position: relative;
+        height: 80%;
+        width: 100%;
+    }
+    
+    .chatArea .bottom .sendMessageArea{
+        height: 10%;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        border-top: 2px solid black;
+    }
+
+.message-container {
+    height: 90%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.message-container::-webkit-scrollbar {
+    display: none;
+}
+
+.userMessage {
+    width: fit-content;
+    border-radius: 20px;
+    border: 1px solid black;
+    background-color: white;
+    margin-right: 20px;
+    padding: 10px;
+    align-self: flex-end;  
+}
+
+.otherUserMessage {
+    width: fit-content;
+    border-radius: 20px;
+    background-color: rgb(142, 177, 142); 
+    margin-left: 20px;
+    padding: 10px;
+    align-self: flex-start; 
+}
+
+
+    
+
+</style>
+<body>
+
+    <div class="window" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 80%; width: 80%; background-color: rgba(255, 255, 255, 0.279); border: 2px solid black; border-radius: 20px; display: flex;">
+
+        <div class="otherUsersList">
+            <% otherUsers.map( (otherUser) => { %>
+                <a class="userCard" UserId="<%= otherUser._id %>" href="">
+                        <img src="<%= otherUser.profilePicture %>" alt="">
+                        <h1><%= otherUser.username %></h1>                   
+                </a>
+            <% }) %>
+        </div>
+
+        <div class="chatArea">
+            <div class="top">
+                <h1 style="position: absolute; left: 50%; top: 20%; transform: translate(-50%, -50%);">Chatting with: <%= recUser.username %></h1>
+            </div>
+            <div class="bottom">
+
+                <div class="message-container">
+                    <% let messages = conversation?.messages %>
+                    <% if(!messages){ %>
+                        <h2>No messages yet</h2>
+                    <% } else { %>
+                    <% messages.map((message)=>{ %>
+                        <% if(message.senderId.toString() === loggedUser._id){ %>
+                            <p class="userMessage"><%= message.message %></p>
+                        <% }else{ %>
+                            <p class="otherUserMessage"><%= message.message %></p>
+                        <% } %>
+                    <% }) %>
+                    <% } %>
+                    
+                </div>
+
+                <form method="post" action="/api/v1/messgae/send/<%= recUser.id %>" class="sendMessageArea">
+                    <input type="text" name="message" id="message" style="width: 80%; ;height: 30px; padding-left: 5px;" >
+                    <input id="sendBtn" type="submit" value="Send" style="width: 15%; height: 30px; background-color: #809881; border: none; border-radius: 10px; cursor: pointer;">
+                </form>
+            </div>
+        </div>
+
+    </div>
+    
+</body>
+</html>
