@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create New Discussion - Unveiled</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .create-discussion-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      max-width: 100%;
+    }
+
+    .create-discussion-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: #283227;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-size: 1rem;
+      color: #283227;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 120px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #809881;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    button:hover {
+      background-color: #6a7c60;
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .form-footer a {
+      color: #283227;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="create-discussion-container">
+    <h2>Create New Discussion</h2>
+    <form action="/api/v1/discussion/create" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="discussion-title">Discussion Title</label>
+        <input type="text" id="title" name="title" required placeholder="Enter the discussion title">
+      </div>
+
+      <div class="form-group">
+        <label for="discussion-description">Description</label>
+        <textarea id="description" name="description" required placeholder="Enter a short description of the discussion"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="discussion-profile-picture">Profile Picture</label>
+        <input type="file" id="discussion-profile-picture" name="profilePicture" accept="image/*" >
+      </div>
+
+      <button type="submit">Create Discussion</button>
+    </form>
+
+    <div class="form-footer">
+      <a href="/discussions">Cancel</a>
+    </div>
+  </div>
+  
+</body>
+</html>

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.route.js";
+import discussionRoute from "./routes/discussion.route.js";
 import messageRoute from "./routes/message.route.js";
 import { login } from "./controllers/user.controller.js";
 import { Post } from "./models/post.model.js";
@@ -12,7 +13,7 @@ import { Server } from "socket.io";
 import http from "http";
 import { Conversation } from "./models/conversation.model.js";
 import { Message } from "./models/message.model.js";
-import { log } from "console";
+import { Discussion } from "./models/discussion.model.js";
 
 dotenv.config({});
 
@@ -211,9 +212,29 @@ app.get('/search', async (req, res)=>{
     res.render('searchPage.ejs', {users, userID});
 });
 
+app.get('/discussions', async (req, res)=>{
+    const userCookie = req.cookies.user;
+
+    const discussions = await Discussion.find();
+
+    if (!userCookie) {
+        return res.redirect('/login');  // Redirect to login if user data is not found in cookie
+    }
+
+    const user = JSON.parse(userCookie); // Parse the user data from cookie
+
+    return res.render('discussions.ejs', {user ,discussions});
+});
+
+app.get('/create-discussion', (req, res)=>{
+    return res.render('createDiscussion.ejs');
+});
+
+
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
 app.use("/api/v1/messgae", messageRoute);
+app.use("/api/v1/discussion", discussionRoute);
 
 
 server.listen(PORT, ()=>{
