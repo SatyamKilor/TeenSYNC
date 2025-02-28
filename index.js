@@ -8,13 +8,11 @@ import messageRoute from "./routes/message.route.js";
 import { login } from "./controllers/user.controller.js";
 import { Post } from "./models/post.model.js";
 import { User } from "./models/user.model.js";
-import { Server } from "socket.io"; // Import the named export `Server`
+import { Server } from "socket.io"; 
 import http from "http";
 import { Conversation } from "./models/conversation.model.js";
 import { Message } from "./models/message.model.js";
-
-
-
+import { log } from "console";
 
 dotenv.config({});
 
@@ -22,14 +20,67 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
-const server = http.createServer(app);  // Your Express app
-const io = new Server(server);  // Create the socket.io server instance
+const server = http.createServer(app); 
+const io = new Server(server);  
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
+
+//real time chatting logic
+ let activeUsers = {};
+
+ io.on('connection', (socket) => {
+
+    socket.on('userConnected', (userId) => {
+        activeUsers[userId] = socket.id;
+    });
+
+    socket.on('sendMessage', async (message, receiverId, senderId) => {
+        const receiverSocketId = activeUsers[receiverId];
+        if (receiverSocketId) {
+            socket.to(receiverSocketId).emit('receiveMessage', {message});
+        }
+
+        try{
+            
+            let conversation = await Conversation.findOne({
+                participants: {$all:[senderId, receiverId]}
+            });
+    
+            if(!conversation){
+                conversation = await Conversation.create({
+                    participants:[senderId, receiverId]
+                })
+            };
+    
+            const newMessage = await Message.create({
+                senderId,
+                receiverId,
+                message
+            })
+    
+            if(newMessage) conversation.messages.push(newMessage._id);
+            await Promise.all([conversation.save(), newMessage.save()]);
+        }   
+        
+        catch(err){
+            console.log(err);
+        }
+
+    });
+
+    socket.on('disconnect', () => {
+        for (let userId in activeUsers) {
+            if (activeUsers[userId] === socket.id) {
+                delete activeUsers[userId];
+                break;
+            }
+        }
+    });
+});
 
 
 //routes
@@ -67,6 +118,7 @@ app.get('/chat/:id', async (req, res) => {
     const recUser = await User.findById(req.params.id);
     const {conversationId} = req.query;
     const conversation = await Conversation.findById(conversationId).populate('messages participants');
+
     
     res.render('testChatwithMessages.ejs', {loggedUser , recUser, otherUsers, conversation});
 });

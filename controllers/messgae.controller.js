@@ -27,11 +27,6 @@ export const sendMessage = async (req, res)=>{
         if(newMessage) conversation.messages.push(newMessage._id);
         await Promise.all([conversation.save(), newMessage.save()]);
 
-        //implement socket.io for realtime data transfer
-
-
-       
-
         return res.redirect(`/chat/${recieverId}?conversationId=${conversation._id}`);
 
     }

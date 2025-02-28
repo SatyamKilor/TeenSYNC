@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Chatting</title>
 </head>
+<link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+    rel="stylesheet"
+/>
 
 <style>
     .otherUsersList{
@@ -106,17 +110,20 @@
     align-self: flex-start; 
 }
 
-
-    
+.ri-arrow-left-circle-line{
+        font-size: 50px;
+    }
 
 </style>
 <body>
-
+    <a href="/chat" style="text-decoration: none; color: black;">
+        <i class="ri-arrow-left-circle-line"></i>
+    </a> 
     <div class="window" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 80%; width: 80%; background-color: rgba(255, 255, 255, 0.279); border: 2px solid black; border-radius: 20px; display: flex;">
 
         <div class="otherUsersList">
             <% otherUsers.map( (otherUser) => { %>
-                <a class="userCard" UserId="<%= otherUser._id %>" href="">
+                <a class="userCard" UserId="<%= otherUser._id %>" href="/api/v1/messgae/all/<%= otherUser._id %>">
                         <img src="<%= otherUser.profilePicture %>" alt="">
                         <h1><%= otherUser.username %></h1>                   
                 </a>
@@ -132,7 +139,7 @@
                 <div class="message-container">
                     <% let messages = conversation?.messages %>
                     <% if(!messages){ %>
-                        <h2>No messages yet</h2>
+
                     <% } else { %>
                     <% messages.map((message)=>{ %>
                         <% if(message.senderId.toString() === loggedUser._id){ %>
@@ -145,14 +152,68 @@
                     
                 </div>
 
-                <form method="post" action="/api/v1/messgae/send/<%= recUser.id %>" class="sendMessageArea">
+                <!-- <form method="post" action="/api/v1/messgae/send/<%= recUser.id %>" class="sendMessageArea">
+                    <input type="text" name="message" id="message" style="width: 80%; ;height: 30px; padding-left: 5px;" >
+                    <input id="sendBtn" type="submit" value="Send" style="width: 15%; height: 30px; background-color: #809881; border: none; border-radius: 10px; cursor: pointer;">
+                </form> -->
+
+                <form  action="" class="sendMessageArea">
                     <input type="text" name="message" id="message" style="width: 80%; ;height: 30px; padding-left: 5px;" >
                     <input id="sendBtn" type="submit" value="Send" style="width: 15%; height: 30px; background-color: #809881; border: none; border-radius: 10px; cursor: pointer;">
                 </form>
             </div>
         </div>
-
     </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+      
+        const form = document.querySelector('.sendMessageArea');
+        const messageInput = document.querySelector('#message');
+        const sendBtn = document.querySelector('#sendBtn');
+        const receiverId = "<%= recUser._id %>"; // Receiver's user ID from the server (via EJS)
+        const loggedInUserId = "<%= loggedUser._id %>"; // Logged-in user's ID
+    
+        // Emit to inform the server that the user is connected
+        socket.emit('userConnected', loggedInUserId);
+    
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = messageInput.value;
+
+            const messageContainer = document.querySelector('.message-container');
+            const messageElement = document.createElement('p');
+            messageElement.classList.add('userMessage');
+            messageElement.textContent = message;
+            messageContainer.appendChild(messageElement);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            if (message) {
+                // Emit the message, sender's ID, and receiver's ID to the server
+                socket.emit('sendMessage', message, receiverId.toString(), loggedInUserId.toString());
+                messageInput.value = ''; // Clear the input
+            }
+        });
+    
+        // Listen for the 'receiveMessage' event to display messages
+        socket.on('receiveMessage', (data) => {
+            // Access the message and senderId from the data object
+            const { message, senderId } = data;
+            
+            const messageContainer = document.querySelector('.message-container');
+            const messageElement = document.createElement('p');
+            
+
+            messageElement.classList.add('otherUserMessage');
+            messageElement.textContent = message;
+            messageContainer.appendChild(messageElement);
+            messageContainer.scrollTop = messageContainer.scrollHeight; // Scroll to the bottom
+        });
+    </script>
+    
+    
+
     
 </body>
 </html>
