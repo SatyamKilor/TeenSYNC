@@ -41,15 +41,14 @@ export const getMessage = async(req, res)=>{
         const senderId = req.id;
         const receiverId = req.params.id;
 
-        const conversation = await Conversation.findOne({
+        let conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] }
         });
 
         if (!conversation) {
-            return res.status(200).json({
-                messages: [],
-                success: true
-            });
+            conversation = await Conversation.create({
+                participants:[senderId, receiverId]
+            })
         }
 
         return res.redirect(`/chat/${receiverId}?conversationId=${conversation._id}`);
