@@ -213,9 +213,8 @@
       <div class="discussions-container" id="discussions-list">
         <!-- Dynamic discussion cards will be injected here -->
         <!-- Example discussion card -->
-         <% console.log(discussions) %>
          <% if(discussions.length === 0){ %>
-          <h1>No discussions yet, please <a href="mailto:satyamkilor8@gmail.com">contact us</a> to add a discussion. </h1>
+          <h1>No discussions yet. </h1>
          <% } else { %>
          <% discussions.map((discussion)=>{ %>
           <div class="discussion-card" discussion-id = "<%= discussion._id %>">
@@ -237,7 +236,11 @@
                   <% const year = date.getFullYear(); %>
                   <% const formattedDate = `${month} ${day}, ${year}`; %>
               <div class="created-at"><%= formattedDate %></div>
-              <button class="join-button">Join</button>
+              <a style="text-decoration: none;" href="/api/v1/discussion/join/<%= discussion._id %>">
+                <button class="join-button">
+                  Join
+                </button>
+              </a>
               <% if(userStatus === "admin"){ %>
                <a style="text-decoration: none;" href="/api/v1/discussion/delete/<%= discussion._id %>">
                  <i class="ri-delete-bin-6-fill"></i>

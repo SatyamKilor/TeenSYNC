@@ -3,6 +3,7 @@ import sharp from "sharp";
 import cloudinary from "cloudinary";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/dataUri.js";
+import { User } from "../models/user.model.js";
 
 export const createDiscussion = async (req, res) => {
     try {
@@ -41,4 +42,28 @@ export const deleteDiscussion = async (req, res) => {
     const discussionId = req.params.id;
     await Discussion.findByIdAndDelete(discussionId);
     return res.redirect('/discussions');
+};
+
+export const joinDiscussion = async (req, res) => {
+    const userId = req.id;
+    
+    const discussionId = req.params.id;
+    let discussion = await Discussion.findById(discussionId);
+
+
+
+
+    if (!discussion) {
+        return res.status(404).send('Discussion not found');
+    }
+
+    if (discussion.participants.includes(userId)) {
+        return res.redirect(`/discussion/${discussionId}`);
+    }
+
+    discussion.participants.push(userId);
+    await discussion.save();
+
+
+    return res.redirect(`/discussion/${discussionId}`);
 };

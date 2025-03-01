@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussion Chat - Unveiled</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+</head>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    height: 100vh;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #283227;
+    color: #fff;
+    padding: 20px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+}
+
+.sidebar nav ul li {
+    margin: 20px 0;
+}
+
+.sidebar-link {
+    color: #809881;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: block;
+}
+
+.sidebar-link:hover {
+    text-decoration: underline;
+}
+
+.logout {
+    color: #f44336;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat-container {
+    width: 80%;
+    max-width: 800px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+}
+
+.chat-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    color: #283227;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.message-sender {
+    font-weight: bold;
+    color: #283227;
+    margin-bottom: 5px;
+}
+
+.message-content {
+    color: #333;
+}
+
+.chat-input {
+    padding: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+}
+
+#message-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+#send-button {
+    background-color: #809881;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#send-button:hover {
+    background-color: #6a7c60;
+}
+
+@media (max-width: 768px) {
+    .chat-container {
+        width: 95%;
+    }
+}
+</style>
+<body>
+    <div class="wrapper">
+        <div class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="/home" class="sidebar-link">Home</a></li>
+                    <li><a href="/search" class="sidebar-link">Search</a></li>
+                    <li><a href="/chat" class="sidebar-link">Messages</a></li>
+                    <li><a href="/discussions" class="sidebar-link">Discussion</a></li>
+                    <li><a href="/new-post" class="sidebar-link">Create New Post</a></li>
+                    <li><a href="/profile" class="sidebar-link">Profile</a></li>
+                    <li><a href="/api/v1/user/logout" class="sidebar-link logout">Log Out</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <a href="/discussions" style="text-decoration: none; color: black; font-size: 30px;">
+                        <i class="ri-arrow-left-circle-line"></i>
+                    </a> 
+                    <h2><%= discussion.title %></h2>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <% let messages = discussion.messages; %>
+                    <% let participants = discussion.participants; %>
+                    <% let senderName; %>
+                    <% messages.map((message)=>{ %>
+                       <% participants.map((participant)=>{ %>
+                        <% if(participant._id.toString() === message.senderId.toString()){ %>
+                            <% senderName = participant.username; %>
+                        <% } %>
+                      <% }) %>
+                        <div class="message">
+                            <% if(user.username === senderName){ %>
+                                <div class="message-sender">You</div>
+                            <% } else { %>
+                            <div class="message-sender"><%= senderName %></div>
+                            <% } %>
+                            <div class="message-content"><%= message.message %></div>
+                        </div>
+                    <% }) %>
+                    </div>
+                <div class="chat-input">
+                    <input type="text" id="message-input" placeholder="Type your message...">
+                    <button id="send-button"><i class="ri-send-plane-fill"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+         const socket = io();
+
+const chatMessages = document.getElementById('chat-messages');
+const messageInput = document.getElementById('message-input');
+const sendButton = document.getElementById('send-button');
+const senderId = "<%= user._id %>";
+const discussionId = "<%= discussion._id %>"; // Get the discussion ID
+
+socket.emit('userConnectedInDiscussion', { senderId }); // Send discussion ID on connect
+
+sendButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    const message = messageInput.value;
+
+    if (message.trim()) {
+        socket.emit('sendMessageToDiscussion', {
+            senderId: senderId,
+            message: message,
+            discussionId: discussionId
+        });
+
+        messageInput.value = ''; // Clear input
+    }
+});
+
+socket.on('newMessage', (data) => {
+    if(data.discussionId === discussionId) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+
+    const senderDiv = document.createElement('div');
+    senderDiv.classList.add('message-sender');
+    senderDiv.textContent = data.senderId === senderId ? "You" : data.senderName; // Display "You" for own messages
+
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('message-content');
+    contentDiv.textContent = data.message;
+
+    messageDiv.appendChild(senderDiv);
+    messageDiv.appendChild(contentDiv);
+
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+    }
+    
+});
+
+    </script>
+</body>
+</html>

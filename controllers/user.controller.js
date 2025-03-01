@@ -122,14 +122,16 @@ export const login = async (req, res) => {
     }
 };
 
-
-export const logout = async(_, res) => {
+export const logout = async (_, res) => {
     try {
-        // Clear the authentication cookie
+        // Clear the authentication token cookie
         res.cookie("token", "", { maxAge: 0 });
 
+        // Clear the user data cookie
+        res.cookie("user", "", { maxAge: 0 });
+
         // Redirect the user to the homepage
-        return res.redirect('/');  // Redirect to the homepage after logout
+        return res.redirect('/'); // Redirect to the homepage after logout
     } catch (error) {
         console.log(error);
         return res.status(500).json({
@@ -138,7 +140,6 @@ export const logout = async(_, res) => {
         });
     }
 };
-
 
 export const getProfile = async(req, res)=>{
     try{
@@ -242,28 +243,6 @@ export const editProfile = async (req, res) => {
     }
 };
 
-
-export const getSuggestedUsers = async(req, res) =>{
-    try{
-        const suggestedUsers = await User.find({_id: {$ne: req.id}}).select("-password");
-
-        if(!suggestedUsers){
-            return res.status(400).json({
-                message: "Currently no users to suggest",
-                // success: false
-            });
-        }; 
-        
-        return res.status(200).json({
-            success: true,
-            user: suggestedUsers
-        });
-    }
-    catch(err){
-        console.log(err);
-    }
-};
-
 export const followOrUnfollowUser = async (req, res) => {
     try {
         const followKarneWala = req.id; 
@@ -348,8 +327,6 @@ export const followOrUnfollowUser = async (req, res) => {
         });
     }
 };
-
-
 
 export const deleteAccount = async(req, res) =>{
     try{

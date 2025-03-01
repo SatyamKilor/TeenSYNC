@@ -209,7 +209,14 @@
                              <% } else { %>
                            <i class="ri-thumb-up-line" data-post-id="<%= post._id %>">   <%= post.upvotes.length %></i> 
                              <% } %>
-                        <i class="ri-share-line"></i>
+                             <a style="text-decoration: none;" href="/<%= post.author %>/profile">
+                               <i class="ri-user-line"></i>
+                             </a>
+                             <% if(loggedUser.accountType === 'admin'){ %>
+                               <a style="text-decoration: none;" href="/delete-post/<%= post._id %>">
+                                <i class="ri-delete-bin-fill"></i>
+                               </a>
+                              <% } %>
                     </div>
                 </div>
             </div>

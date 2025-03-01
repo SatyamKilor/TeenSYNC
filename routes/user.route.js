@@ -1,5 +1,5 @@
 import express from 'express';
-import {editProfile, followOrUnfollowUser, getProfile, getSuggestedUsers, login, logout, register, deleteAccount} from '../controllers/user.controller.js';
+import {editProfile, followOrUnfollowUser, getProfile, login, logout, register, deleteAccount} from '../controllers/user.controller.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 import upload from '../middlewares/multer.js';
 

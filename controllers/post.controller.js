@@ -212,11 +212,9 @@ export const upvote = async(req, res)=>{
             });
         }
 
-        //upvote logic starts here bhai
         await post.updateOne({$addToSet: {upvotes: upvoterId}});
         await post.save();
 
-        //implement socket.io for real time notification
 
         return res.status(200).json({
             message: "Post upvoted",
@@ -260,24 +258,33 @@ export const deletePost = async(req, res)=>{
     try{
         const postId = req.params.id;
         const authorID = req.id;
+        
+        let user = await User.findById(authorID);
 
-        const post = await Post.findById(postId);
+        const post = await Post.findById(postId).populate('author');
         if(!post) return res.status(404).json({
             message: 'Post not found',
             success: false
         });
 
         if(post.author.toString() !== authorID){
+            if(user.accountType !== 'admin'){
             return res.status(403).json({
                 message: 'Unauthorised User Action',
                 success: false
             });
         }
+        }
         await Post.findByIdAndDelete(postId);
 
-        let user = await User.findById(authorID);
-        user.posts = user.posts.filter(id => id.toString() !== postId);
-        await user.save();
+        if(user.accountType !== 'admin'){
+            user.posts = user.posts.filter(id => id.toString() !== postId);
+            await user.save();
+        } else {
+            post.author.posts = post.author.posts.filter(id => id.toString() !== postId);
+            await post.author.save();
+        }
+
 
        // Update the user cookie with the new user data
                const updatedUser = {

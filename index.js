@@ -33,10 +33,13 @@ app.set('view engine', 'ejs');
 //real time chatting logic
  let activeUsers = {};
 
- io.on('connection', (socket) => {
+ let discussionUsers = {};
 
+ io.on('connection', (socket) => {
+    
+    // One to one chat
     socket.on('userConnected', (userId) => {
-        activeUsers[userId] = socket.id;
+        activeUsers[userId] = socket.id;        
     });
 
     socket.on('sendMessage', async (message, receiverId, senderId) => {
@@ -73,6 +76,41 @@ app.set('view engine', 'ejs');
 
     });
 
+
+    // Discussion chat
+    socket.on('userConnectedInDiscussion', (senderId) => {
+        discussionUsers[senderId] = socket.id;
+    });
+
+    socket.on('sendMessageToDiscussion', async (data) => {
+        let sender = await User.findById(data.senderId).select('-password');
+        
+        io.emit('newMessage', {
+            senderId: data.senderId,
+            senderName: sender.username,
+            message: data.message,
+            discussionId: data.discussionId
+        });
+
+        try{
+            let message = data.message;
+            let discussion = await Discussion.findById(data.discussionId).populate('participants messages');
+
+            const newMessage = await Message.create({
+                senderId: data.senderId,
+                message
+            });
+
+            if(newMessage) discussion.messages.push(newMessage._id);
+
+            await Promise.all([discussion.save(), newMessage.save()]);
+        }
+
+        catch(err){
+            console.log(err);
+        }
+    });
+
     socket.on('disconnect', () => {
         for (let userId in activeUsers) {
             if (activeUsers[userId] === socket.id) {
@@ -92,23 +130,43 @@ app.get("/", (req, res)=>{
 
 
 app.get("/home", async(req, res)=>{
+    try{
+        const posts = await Post.find();
+        const users = await User.find();
+        const loggedUserCookie = req.cookies.user;
+        if(!loggedUserCookie){
+            return res.redirect('/login');
+        }
+        const loggedUserCookieData = JSON.parse(loggedUserCookie);
+        const loggedUser = await User.findById(loggedUserCookieData._id);
+    
+        return res.render("home.ejs", {posts, users, loggedUser});     
+    }
 
-    const posts = await Post.find();
-    const users = await User.find();
-    const loggedUserCookie = req.cookies.user;
-    const loggedUser = JSON.parse(loggedUserCookie);
-
-    return res.render("home.ejs", {posts, users, loggedUser}); 
+    catch(err){
+        console.log(err);
+        
+    }
+    
 });
 
 
 app.get('/chat', async (req, res) => {
 
+    try{
     const loggedUserCookie = req.cookies.user;
+    if(!loggedUserCookie){
+        return res.redirect('/login');
+    }
     const loggedUser = JSON.parse(loggedUserCookie);
     const otherUsers = await User.find({ _id: { $ne: loggedUser._id } });
     
     res.render('testChat.ejs', {loggedUser, otherUsers});
+    }
+    
+    catch(err){
+        console.log(err);
+    }
 });
 
 app.get('/chat/:id', async (req, res) => {
@@ -124,10 +182,6 @@ app.get('/chat/:id', async (req, res) => {
     res.render('testChatwithMessages.ejs', {loggedUser , recUser, otherUsers, conversation});
 });
 
-app.get("/register", (req, res)=>{
-    return res.render("register.ejs"); 
-});
-
 app.get("/sign-in", (req, res)=>{
     return res.render("register.ejs");
 })
@@ -138,16 +192,17 @@ app.get("/login", (req, res)=>{
 
 app.post("/login", login)
 
-app.get("/profile", (req, res) => {
-    const userCookie = req.cookies.user;
+app.get("/profile", async (req, res) => {
+    const loggeduserCookie = req.cookies.user;
 
-    if (!userCookie) {
-        return res.redirect('/login');  // Redirect to login if user data is not found in cookie
+    if (!loggeduserCookie) {
+        return res.redirect('/login');
     }
 
-    const user = JSON.parse(userCookie); // Parse the user data from cookie
-
-    res.render("profile.ejs", { user: user });  // Pass the user data to the EJS template
+    const loggeduser = JSON.parse(loggeduserCookie); 
+    const loggeduserId = loggeduser._id;
+    const user = await User.findById(loggeduserId)?.populate('posts');
+    res.render("profile.ejs", { user: user });  
 });
 
 
@@ -158,9 +213,14 @@ app.get('/:id/profile', async (req, res) => {
     });
 
     const loggedUserCookie = req.cookies.user;
-    const loggedUser = JSON.parse(loggedUserCookie);
+    const loggedUserCookieData = JSON.parse(loggedUserCookie);
+    const loggedUser = await User.findById(loggedUserCookieData._id);
+
+    if(user.username === loggedUser.username){
+        return res.redirect('/profile');
+    }
     
-    res.render('otherProfile.ejs', { user, loggedUser });
+    return res.render('otherProfile.ejs', { user, loggedUser });
 });
 
 
@@ -168,10 +228,10 @@ app.get('/edit', (req, res)=>{
     const userCookie = req.cookies.user;
 
     if (!userCookie) {
-        return res.redirect('/login');  // Redirect to login if user data is not found in cookie
+        return res.redirect('/login');  
     }
 
-    const user = JSON.parse(userCookie); // Parse the user data from cookie
+    const user = JSON.parse(userCookie);
     res.render("editProfile.ejs", { user });
 });
 
@@ -202,9 +262,11 @@ app.get('/edit-post/:id', async (req,res)=>{
 });
 
 app.get('/search', async (req, res)=>{
-    const users = await User.find();  // Fetch all users
-   
+    const users = await User.find();
     const userCookie = req.cookies.user;
+    if(!userCookie){
+        return res.redirect('/login');
+    }
     const user = JSON.parse(userCookie);
     const userID = user._id;
     
@@ -215,15 +277,25 @@ app.get('/search', async (req, res)=>{
 app.get('/discussions', async (req, res)=>{
     const userCookie = req.cookies.user;
 
-    const discussions = await Discussion.find();
+    const discussions = await Discussion.find().populate('participants');
 
     if (!userCookie) {
-        return res.redirect('/login');  // Redirect to login if user data is not found in cookie
+        return res.redirect('/login');
     }
 
-    const user = JSON.parse(userCookie); // Parse the user data from cookie
+    const user = JSON.parse(userCookie); 
 
     return res.render('discussions.ejs', {user ,discussions});
+});
+
+app.get('/discussion/:id', async (req, res)=>{
+    const discussionId = req.params.id;
+    const discussion = await Discussion.findById(discussionId).populate('messages participants');
+
+    const userCookie = req.cookies.user;
+    const user = JSON.parse(userCookie);
+
+    res.render('discussionChattingArea.ejs', {discussion, user});
 });
 
 app.get('/create-discussion', (req, res)=>{
