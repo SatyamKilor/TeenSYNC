@@ -7,13 +7,21 @@ import {Post} from '../models/post.model.js'
 
 export const register = async(req , res) => {
     try{
-        const {email, password} = req.body;
-        if(!email || !password){
+        const {email, password, confirmPassword} = req.body;
+        if(!email || !password || !confirmPassword){
             return res.status(401).json({
                 message: "Something is missing, please fill all the fields.",
                 success: false,
             });
         }
+
+        if(password !== confirmPassword){
+            return res.status(401).json({
+                message: 'Please confirm password correctly',
+                success: false
+            });
+        }
+
         const user = await User.findOne({email});
         if(user){
             return res.status(401).json({

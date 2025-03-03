@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unveiled - Anonymous Social Media</title>
-  <link rel="stylesheet" href="styles.css">
 </head>
 <style>
     * {
@@ -12,10 +11,24 @@
   padding: 0;
   box-sizing: border-box;
 }
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html{
+  height: 100%;
+  width: 100%;
+}
 
 body {
+  height: 100%;
+  width: 100%;
   font-family: Arial, sans-serif;
-  background-color: #000;
+  background: url('https://i.pinimg.com/736x/0b/d1/7c/0bd17cda9a217ce330d3fcb3537f92a5.jpg');
+  background-position: top;
+  background-size: cover;
   color: #fff;
   display: flex;
   justify-content: center;
@@ -23,6 +36,8 @@ body {
   min-height: 100vh;
   margin: 0;
 }
+
+
 
 .container {
   text-align: center;
@@ -84,27 +99,43 @@ footer p {
   margin-top: 40px;
 }
 
+.logo{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25vh;
+  width: 25vh;
+}
+
 </style>
 <body>
-  <div class="container">
-    <header>
-      <h1>Welcome to Unveiled</h1>
-      <p>Your safe space to share, listen, and connect anonymously.</p>
-    </header>
-    
-    <div class="cta-section">
-        <form action="/sign-in" method="get">
-            <button class="cta-button signup-btn" type="submit">Sign Up</button>
-        </form>
-
-        <form action="/login" method="get">
-            <button class="cta-button login-btn" type="submit">Login</button>
-        </form>
+  <section id="home">
+    <div class="container">
+      <img class="logo" src="https://res.cloudinary.com/dkg97rxeh/image/upload/v1740859181/Teensync_logo_transparent_fbgvwl.png" alt="">
+      <header>
+        <h1>Welcome to Unveiled</h1>
+        <p>Your safe space to share, listen, and connect anonymously.</p>
+      </header>
+      
+      <div class="cta-section">
+          <form action="/sign-in" method="get">
+              <button class="cta-button signup-btn" type="submit">Sign Up</button>
+          </form>
+  
+          <form action="/login" method="get">
+              <button class="cta-button login-btn" type="submit">Login</button>
+          </form>
+      </div>
+  
+      <footer>
+        <p>&copy; 2025 Unveiled. All rights reserved.</p>
+      </footer>
     </div>
+  </section>
 
-    <footer>
-      <p>&copy; 2025 Unveiled. All rights reserved.</p>
-    </footer>
-  </div>
+  <section id="features"></section>
+  <section id="aboutUs"></section>
+  <section id="contactUs"></section>
+  
 </body>
 </html>
