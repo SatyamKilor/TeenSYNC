@@ -101,7 +101,7 @@ body {
 
 .nav-button:hover,
 .nav-button.active {
-    color: var(--purple);
+    color: white;
     background-color: var(--surface-lighter);
 }
 
@@ -480,6 +480,13 @@ body {
                             <a class="action-button" href="mailto:satyamkilor8@gmail.com">
                               <i class="ph ph-warning-circle"></i>
                             </a>
+
+                            <% if(loggedUser.accountType === 'admin'){ %>
+                                <a class="action-button" href="/delete-post/<%= post._id %>">
+                                 <i class="ri-delete-bin-fill"></i>
+                                </a>
+                               <% } %>
+ 
                         </div>
                     </div>
                 </div>

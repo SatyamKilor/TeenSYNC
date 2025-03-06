@@ -9,17 +9,21 @@
 
 <style>
 body {
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
     font-family: Arial, sans-serif;
-    background-color: #283227;
+    /* background-color: #283227; */
     color: white;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 .ri-home-4-line{
     font-size: 3vh;
     cursor: pointer;
-    color: #809881 ;
+    color: #888098 ;
     transition: 0.3s;
 }
 
@@ -34,8 +38,9 @@ body {
     margin: 50px auto;
     text-align: center;
     padding: 20px;
-    background-color: #535D51;
+    background-color: #120f196b;
     border-radius: 10px;
+    box-shadow: 0 0 30px rgba(235, 235, 235, 0.2);
 }
 
 .title {
@@ -51,12 +56,12 @@ body {
     border: 1px solid #809881;
     border-radius: 5px;
     font-size: 1rem;
-    background-color: #283227;
+    background-color: #120f1979;
     color: white;
 }
 
 .search-input::placeholder {
-    color: #809881;
+    color: #808b98;
 }
 
 .search-results {
@@ -68,7 +73,7 @@ body {
     align-items: center;
     padding: 10px;
     margin-bottom: 10px;
-    background-color: #809881;
+    background-color: #8c8098;
     border-radius: 5px;
     color: #283227;
     font-size: 1.1rem;
@@ -90,9 +95,34 @@ body {
 
 .user-result:hover {
     transition: 0.5s;
-    background-color: #465447;
+    background-color: #4f4654;
     color: white;
     cursor: pointer;
+}
+
+@media (max-width: 480px){
+
+    body{
+        overflow: auto;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+    
+    .search-container{
+        width: 75%;
+        overflow: scroll;
+    }
+
+    .search-input {
+        width: 80%;
+        font-size: 0.8rem;
+    }
+
+    .ri-home-4-line {
+        font-size: 2.5vh;
+    }
 }
 
 
@@ -115,7 +145,7 @@ body {
 
         const homeBtn = document.querySelector(".ri-home-4-line");
         homeBtn.addEventListener('click', ()=>{
-            window.location.href = "/profile";            
+            window.location.href = "/home";            
         });
 
 

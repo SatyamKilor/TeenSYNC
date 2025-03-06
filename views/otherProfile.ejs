@@ -7,230 +7,250 @@
   <!-- Remix Icon CDN -->
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
   <style>
+    :root {
+        --purple: #9333ea;
+        --light-blue: #6366f1;
+        --dark-blue: #302b63;
+        --dark-gray: #374151;
+        --medium-gray: #9ca3af;
+        --white: #ffffff;
+        --light-purple: #8b5cf6;
+        --black: #0f0c29;
+
+        /* Dark theme colors */
+        --background: #0f172a;
+        --surface: #1e293b;
+        --surface-lighter: #334155;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+    }
+
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      display: flex;
-      height: 100vh;
+        font-family: Arial, sans-serif;
+        background-color: var(--background);
+        display: flex;
+        height: 100vh;
+        color: var(--text-primary);
     }
 
     .wrapper {
-      display: flex;
-      width: 100%;
+        display: flex;
+        width: 100%;
     }
 
     .sidebar {
-      width: 250px;
-      background-color: #283227;
-      color: #fff;
-      padding: 20px;
-      height: 100vh;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+        width: 250px;
+        background-color: var(--surface);
+        color: var(--text-primary);
+        padding: 20px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
 
     .sidebar nav ul {
-      list-style-type: none;
+        list-style-type: none;
     }
 
     .sidebar nav ul li {
-      margin: 20px 0;
+        margin: 20px 0;
     }
 
     .sidebar-link {
-      color: #809881;
-      text-decoration: none;
-      font-size: 1.1rem;
-      display: block;
+        color: var(--medium-gray);
+        text-decoration: none;
+        font-size: 1.1rem;
+        display: block;
     }
 
     .sidebar-link:hover {
-      text-decoration: underline;
+        text-decoration: underline;
+        color: var(--light-blue);
     }
 
     .logout {
-      color: #f44336;
+        color: var(--purple);
     }
 
     .main-content {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
     }
 
     .profile-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
     }
 
     .profile-info {
-      display: flex;
-      align-items: center;
+        display: flex;
+        align-items: center;
     }
 
     .profile-img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      margin-right: 20px;
-      border: 5px solid #809881;
-      object-fit: cover;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin-right: 20px;
+        border: 5px solid var(--light-blue);
+        object-fit: cover;
     }
 
     .profile-details {
-      display: flex;
-      flex-direction: column;
-      text-align: left;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
     }
 
     .username {
-      font-size: 2rem;
-      color: #283227;
+        font-size: 2rem;
+        color: var(--text-primary);
     }
 
     .bio {
-      font-size: 1rem;
-      color: #555;
-      margin-top: 10px;
+        font-size: 1rem;
+        color: var(--text-secondary);
+        margin-top: 10px;
     }
 
     .follow-btn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #809881;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1rem;
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: var(--light-blue);
+        color: var(--white);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
     }
 
     .follow-btn:hover {
-      background-color: #6a7c60;
+        background-color: var(--light-purple);
     }
 
     .profile-stats {
-      display: flex;
-      gap: 20px;
+        display: flex;
+        gap: 20px;
     }
 
     .stat {
-      text-align: center;
+        text-align: center;
     }
 
     .stat strong {
-      font-size: 1.5rem;
-      display: block;
+        font-size: 1.5rem;
+        display: block;
     }
 
     .feed {
-      margin-top: 30px;
+        margin-top: 30px;
     }
 
     .post-gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
     }
 
     .post {
-      background-color: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      padding: 10px;
+        background-color: var(--surface-lighter);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        padding: 10px;
     }
 
     .post-img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-      border-radius: 5px;
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 5px;
     }
 
     .post-details {
-      padding-top: 10px;
-      text-align: left;
+        padding-top: 10px;
+        text-align: left;
     }
 
     .post-username {
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: #283227;
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: var(--text-primary);
     }
 
     .post-caption {
-      margin-top: 5px;
-      font-size: 1rem;
-      color: #555;
+        margin-top: 5px;
+        font-size: 1rem;
+        color: var(--text-secondary);
     }
 
     .post-actions {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin-top: 15px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-top: 15px;
     }
 
     .post-actions i {
-      cursor: pointer;
-      font-size: 1.5rem;
-      color: #809881;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: rgba(255, 255, 255, 0.395);
     }
 
     .post-actions i:hover {
-      color: #6a7c60;
+        color: white;
     }
 
     .liked i {
-      color: #f44336;
+        color: var(--purple);
     }
 
     .bookmarked i {
-      color: #809881;
+        color: var(--light-blue);
     }
 
     @media (max-width: 768px) {
-      .wrapper {
-        flex-direction: column;
-      }
+        .wrapper {
+            flex-direction: column;
+        }
 
-      .sidebar {
-        width: 100%;
-        height: auto;
-      }
+        .sidebar {
+            width: 100%;
+            height: auto;
+        }
 
-      .profile-header {
-        flex-direction: column;
-        align-items: center;
-      }
+        .profile-header {
+            flex-direction: column;
+            align-items: center;
+        }
 
-      .profile-info {
-        flex-direction: column;
-        align-items: center;
-      }
+        .profile-info {
+            flex-direction: column;
+            align-items: center;
+        }
 
-      .profile-img {
-        margin-right: 0;
-        margin-bottom: 20px;
-      }
+        .profile-img {
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
 
-      .profile-stats {
-        flex-direction: column;
-        gap: 10px;
-      }
+        .profile-stats {
+            flex-direction: column;
+            gap: 10px;
+        }
     }
-
-  </style>
+</style>
 </head>
 <body>
   <div class="wrapper">
@@ -238,12 +258,11 @@
     <div class="sidebar">
       <nav>
         <ul>
-          <li><a href="/home" class="sidebar-link">Home</a></li>
-          <li><a href="/search" class="sidebar-link">Search</a></li>
-          <li><a href="/chat" class="sidebar-link">Messages</a></li>
-          <li><a href="/discussions" class="sidebar-link">Discussion</a></li>
-          <li><a href="/new-post" class="sidebar-link">Create New Post</a></li>
-          <li><a href="/profile" class="sidebar-link">Profile</a></li>
+          <li><a href="/home" class="sidebar-link"><i class="ri-home-2-line"></i> Home</a></li>
+          <li><a href="/search" class="sidebar-link"><i class="ri-search-line"></i> Search</a></li>
+          <li><a href="/chat" class="sidebar-link"><i class="ri-chat-3-line"></i> Messages</a></li>
+          <li><a href="/discussions" class="sidebar-link"><i class="ri-group-line"></i> Discussion</a></li>
+          <li><a href="/profile" class="sidebar-link"><i class="ri-user-line"></i> Profile</a></li>
           <li><a href="/api/v1/user/logout" class="sidebar-link logout">Log Out</a></li>
         </ul>
       </nav>
@@ -295,7 +314,7 @@
 
    <!-- User's Posts -->
 <div class="feed" id="user-posts">
-<h3>User's Posts</h3>
+<h3><%= user.username %>'s Posts</h3>
 <div class="post-gallery">
   <% let posts = user.posts; %>
 
