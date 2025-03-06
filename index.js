@@ -133,14 +133,20 @@ app.get("/home", async(req, res)=>{
     try{
         const posts = await Post.find();
         const users = await User.find();
+        const discussions = await Discussion.find();
         const loggedUserCookie = req.cookies.user;
         if(!loggedUserCookie){
             return res.redirect('/login');
         }
         const loggedUserCookieData = JSON.parse(loggedUserCookie);
-        const loggedUser = await User.findById(loggedUserCookieData._id);
+        const loggedUser = await User.findById(loggedUserCookieData._id).populate('followers');
+
+            let UserDiscussions = await Discussion.find({
+                participants: {$all:[loggedUserCookieData._id]}
+            });
+        
     
-        return res.render("home.ejs", {posts, users, loggedUser});     
+        return res.render("home.ejs", {posts, users, loggedUser, UserDiscussions});     
     }
 
     catch(err){

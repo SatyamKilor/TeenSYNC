@@ -5,7 +5,6 @@ const postScehma = new mongoose.Schema({
     contents: {type: String},
     caption: {type: String, default: ""},
     upvotes: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
-    comments: [{type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
 },{timestamps: true});
 
 export const Post = mongoose.model('Post', postScehma);

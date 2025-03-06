@@ -123,7 +123,7 @@ export const login = async (req, res) => {
         });
 
         // Redirect to home
-        return res.redirect('/profile');
+        return res.redirect('/home');
     } catch (error) {
         console.log(error);
         res.status(500).send("Internal Server Error");

@@ -262,19 +262,24 @@ export const deletePost = async(req, res)=>{
         let user = await User.findById(authorID);
 
         const post = await Post.findById(postId).populate('author');
+        
         if(!post) return res.status(404).json({
             message: 'Post not found',
             success: false
         });
 
-        if(post.author.toString() !== authorID){
+        console.log("Post Author ID: "+ post.author._id.toString() + " authorID: " + authorID);
+        
+
+        if(post.author._id.toString() !== authorID){
             if(user.accountType !== 'admin'){
-            return res.status(403).json({
+             return res.status(403).json({
                 message: 'Unauthorised User Action',
                 success: false
-            });
+                });
+            }
         }
-        }
+        
         await Post.findByIdAndDelete(postId);
 
         if(user.accountType !== 'admin'){
