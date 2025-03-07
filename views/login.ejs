@@ -298,6 +298,7 @@ input:focus {
               </button>
             </div>
 
+            <div id="error-message" style="color: red;"></div>
 
             <button type="submit" class="submit-button">
               Sign In
@@ -318,6 +319,32 @@ input:focus {
     </div>
 
     <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            const errorMessageDiv = document.getElementById('error-message');
+
+            if (error) {
+                switch (error) {
+                    case 'missing_fields':
+                        errorMessageDiv.textContent = 'Please fill all the fields.';
+                        break;
+                    case 'user_not_found':
+                        errorMessageDiv.textContent = 'User does not exist.';
+                        break;
+                    case 'incorrect_password':
+                        errorMessageDiv.textContent = 'Incorrect Password, Please try again.';
+                        break;
+                    case 'server_error':
+                        errorMessageDiv.textContent = 'An internal server error occurred. Please try again later.';
+                        break;
+                    default:
+                        errorMessageDiv.textContent = 'An error occurred. Please try again.';
+                }
+            }
+        });
+
       let showPassword = false;
       const passwordInput = document.getElementById('password');
       const icon = document.getElementById('passToggler');

@@ -57,29 +57,20 @@ export const register = async(req , res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-
+        
         if (!email || !password) {
-            return res.status(401).json({
-                message: "Something is missing, please fill all the fields.",
-                success: false,
-            });
+            return res.redirect('/login?error=missing_fields');
         }
 
         let user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).json({
-                message: "User does not exist",
-                success: false,
-            });
+            return res.redirect('/login?error=user_not_found');
         }
 
         const isPasswordMatch = await bcrypt.compare(password, user.password);
 
         if (!isPasswordMatch) {
-            return res.status(401).json({
-                message: "Incorrect Password, Please try again.",
-                success: false,
-            });
+            return res.redirect('/login?error=incorrect_password');
         }
 
         const token = await jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
