@@ -38,7 +38,7 @@
 }
 
 body {
-    background-color: var(--background);
+    background: linear-gradient(to bottom, var(--background), var(--dark-blue));
     color: var(--text-primary);
     padding-top: 80px; /* Add padding to account for fixed navbar */
 }
@@ -110,7 +110,7 @@ body {
     border-radius: 16px;
     padding: 24px;
     border: 1px solid var(--border-color);
-    margin-top: 10%;
+    margin-top: 7%;
 }
 
 .profile-header {
@@ -275,10 +275,23 @@ body {
 }
 
 .post-stats {
+    margin-top: 25px;
     display: flex;
     gap: 16px;
     color: var(--text-secondary);
     font-size: 14px;
+    justify-content: space-around;
+}
+
+.post-stats i{
+    font-size: 20px;
+    transition: 0.3s;
+}
+
+.post-stats i:hover{
+    color: white;
+    font-size: 25px;
+    transition: 0.3s;
 }
 
 .post-stats span {
@@ -320,7 +333,7 @@ body {
 }
  </style>
 <body>
-    <!-- Navigation -->
+
     <nav class="navbar">
         <a class="nav-button" href="/home">
             <i class="ph ph-house"></i>
@@ -342,7 +355,7 @@ body {
 
     <div class="container">
         <div class="content-wrapper">
-            <!-- Profile Section -->
+ 
             <div class="profile-section">
                 <div class="profile-header">
                   <div class="left">
@@ -388,12 +401,10 @@ body {
                   </div>                   
                 </div>
 
-                <!-- Profile Navigation -->
                 <div class="profile-nav">
                     <a href="#" class="profile-nav-item active">Posts</a>
                 </div>
 
-                <!-- Posts Grid -->
                 <div class="posts-grid">
                   <% let posts = user.posts; %>
 

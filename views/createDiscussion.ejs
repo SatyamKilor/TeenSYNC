@@ -5,95 +5,118 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create New Discussion - Unveiled</title>
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+ <style>
+  :root {
+    --purple: #9333ea;
+    --light-blue: #6366f1;
+    --dark-blue: #302b63;
+    --dark-gray: #374151;
+    --medium-gray: #9ca3af;
+    --white: #ffffff;
+    --light-purple: #8b5cf6;
+    --black: #0f0c29;
+    --background: #0f172a;
+    --surface: #1e293b;
+    --surface-lighter: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+}
 
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    .create-discussion-container {
-      background-color: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      width: 400px;
-      max-width: 100%;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, var(--background), var(--dark-blue));
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-    .create-discussion-container h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 1.8rem;
-      color: #283227;
-    }
+.create-discussion-container {
+    background-color: var(--surface-lighter);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    max-width: 100%;
+}
 
-    .form-group {
-      margin-bottom: 15px;
-    }
+.create-discussion-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: var(--text-primary);
+}
 
-    label {
-      font-size: 1rem;
-      color: #283227;
-    }
+.form-group {
+    margin-bottom: 15px;
+}
 
-    input[type="text"],
-    textarea,
-    input[type="file"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 1rem;
-    }
+label {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
 
-    textarea {
-      resize: vertical;
-      height: 120px;
-    }
+input[type="text"],
+textarea,
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: var(--surface);
+    color: var(--text-primary);
+}
 
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #809881;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1.1rem;
-    }
+textarea {
+    resize: vertical;
+    height: 120px;
+}
 
-    button:hover {
-      background-color: #6a7c60;
-    }
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--light-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+}
 
-    .form-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 15px;
-    }
+button:hover {
+    background-color: var(--light-purple);
+}
 
-    .form-footer a {
-      color: #283227;
-      text-decoration: none;
-      font-size: 1rem;
-    }
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
 
-    .form-footer a:hover {
-      text-decoration: underline;
-    }
-  </style>
+.form-footer a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+    color: var(--light-purple);
+}
+ </style>
 </head>
 <body>
   <div class="create-discussion-container">

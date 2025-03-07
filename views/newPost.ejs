@@ -6,7 +6,24 @@
     <title>Create Post - Unveiled</title>
 </head>
 <style>
-    * {
+    :root {
+    --purple: #9333ea;
+    --light-blue: #6366f1;
+    --dark-blue: #302b63;
+    --dark-gray: #374151;
+    --medium-gray: #9ca3af;
+    --white: #ffffff;
+    --light-purple: #8b5cf6;
+    --black: #0f0c29;
+    --background: #0f172a;
+    --surface: #1e293b;
+    --surface-lighter: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+}
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -14,8 +31,8 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #283227; /* Dark Green */
-    color: white;
+    background: linear-gradient(to bottom, var(--background), var(--dark-blue));
+    color: var(--text-primary);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,18 +40,18 @@ body {
 }
 
 .container {
-    background-color: #535D51; /* Mid Green */
+    background-color: var(--surface-lighter);
     padding: 30px;
     border-radius: 10px;
     width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
 h1 {
     margin-bottom: 20px;
     font-size: 24px;
-    color: white;
+    color: var(--text-primary);
 }
 
 .form-group {
@@ -45,7 +62,7 @@ h1 {
 label {
     font-size: 14px;
     font-weight: bold;
-    color: white;
+    color: var(--text-primary);
     display: block;
     margin-bottom: 5px;
 }
@@ -55,9 +72,9 @@ textarea {
     width: 100%;
     padding: 10px;
     border-radius: 5px;
-    border: 1px solid #809881; /* Light Green */
-    background-color: #283227; /* Dark Green */
-    color: white;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface);
+    color: var(--text-primary);
     font-size: 16px;
 }
 
@@ -66,8 +83,8 @@ textarea {
 }
 
 button.submit-btn {
-    background-color: #809881; /* Light Green */
-    color: white;
+    background-color: var(--light-blue);
+    color: var(--white);
     padding: 12px 20px;
     border: none;
     border-radius: 5px;
@@ -77,13 +94,12 @@ button.submit-btn {
 }
 
 button.submit-btn:hover {
-    background-color: #535D51; /* Mid Green */
+    background-color: var(--light-purple);
 }
 
 button.submit-btn:active {
-    background-color: #283227; /* Dark Green */
+    background-color: var(--dark-gray);
 }
-
 </style>
 <body>
     <div class="container">

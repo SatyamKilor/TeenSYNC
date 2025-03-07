@@ -37,7 +37,7 @@
 }
 
 body {
-    background-color: var(--background);
+    background: linear-gradient(to bottom, var(--background), var(--dark-blue));
     color: var(--text-primary);
 }
 
@@ -393,12 +393,16 @@ body {
             <div class="sidebar-section">
               <% let userFollowers = loggedUser.followers; %>
                 <h3>FRIENDS</h3>
+                <% if(userFollowers.length === 0){ %>
+                    <h3>No friends yet</h3>
+                <% } else { %>
                 <% userFollowers.map( (follower) =>{ %>
                   <a class="friend-item" href="/<%= follower._id %>/profile">
                     <img class="avatar" src="<%= follower.profilePicture %>" alt="">
                     <span><%= follower.username %></span>
                   </a>
                 <% }) %>
+                <% } %>
             </div>
         </div>
 
